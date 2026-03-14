@@ -3,68 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexa · free domain gen</title>
+    <title>Nexa Domain Generator · Free & Premium Domains</title>
     <!-- Font Awesome 6 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Google Fonts (Inter) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            background: linear-gradient(145deg, #f6f9fc 0%, #e9f2f9 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            color: #1a1a1a;
         }
 
-        /* professional navbar */
+        /* Navbar */
         .navbar {
-            background: rgba(10, 25, 47, 0.98);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 8px 20px rgba(0,20,40,0.12);
-            padding: 0.9rem 2.5rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo-icon {
-            background: #3b82f6;
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.4rem;
-            box-shadow: 0 6px 12px rgba(59,130,246,0.3);
-        }
-
-        .logo-text {
+        .logo {
+            font-size: 1.8rem;
             font-weight: 700;
-            font-size: 1.5rem;
-            letter-spacing: -0.5px;
-            color: white;
-        }
-        .logo-text span {
-            color: #3b82f6;
-            font-weight: 400;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .nav-links {
@@ -74,699 +51,740 @@
         }
 
         .nav-links a {
-            color: #ccd6f6;
             text-decoration: none;
+            color: #4a5568;
             font-weight: 500;
-            font-size: 1.05rem;
-            padding: 0.5rem 0.2rem;
-            border-bottom: 2px solid transparent;
-            transition: 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .nav-links a i {
-            font-size: 1rem;
-            color: #3b82f6;
+            transition: 0.3s;
         }
 
         .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .user-badge {
+            background: #667eea;
             color: white;
-            border-bottom-color: #3b82f6;
-        }
-
-        .main-container {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 3rem 2rem;
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-radius: 42px;
-            box-shadow: 0 30px 60px rgba(0, 30, 60, 0.15), 0 0 0 1px rgba(255,255,255,0.6) inset;
-            max-width: 1000px;
-            width: 100%;
-            padding: 2.8rem 3rem;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2.5rem;
-        }
-
-        .hero-left {
-            flex: 1.2;
-            min-width: 280px;
-        }
-
-        .hero-left h1 {
-            font-size: 2.8rem;
-            font-weight: 700;
-            background: linear-gradient(130deg, #0a192f, #1d4ed8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1.2;
-            margin-bottom: 1rem;
-        }
-
-        .badge {
-            background: rgba(59,130,246,0.12);
-            color: #1e3a8a;
-            font-weight: 600;
-            font-size: 0.9rem;
-            padding: 0.3rem 1rem;
-            border-radius: 40px;
-            display: inline-block;
-            border: 1px solid rgba(59,130,246,0.3);
-            margin-bottom: 1.8rem;
-        }
-
-        .feature-list {
-            margin-top: 2rem;
-            list-style: none;
-        }
-
-        .feature-list li {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            color: #1e293b;
-        }
-
-        .feature-list i {
-            color: #3b82f6;
-            background: white;
-            border-radius: 50%;
-            padding: 6px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.02);
-        }
-
-        .domain-demo {
-            background: rgba(255,255,255,0.5);
-            border-radius: 60px;
-            padding: 0.6rem 1rem 0.6rem 1.8rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 1rem;
-            border: 1px solid white;
-            margin-top: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .domain-demo code {
-            font-size: 1.3rem;
-            background: transparent;
-            color: #0f172a;
-            font-weight: 600;
-        }
-
-        .domain-demo .pill {
-            background: #3b82f6;
-            color: white;
-            padding: 0.4rem 1.4rem;
-            border-radius: 60px;
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-
-        /* auth section / main landing after login */
-        .auth-section {
-            flex: 1;
-            min-width: 280px;
-            background: rgba(255,255,255,0.7);
-            border-radius: 32px;
-            padding: 2rem 1.8rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.02);
-            border: 1px solid rgba(255,255,255,0.9);
-        }
-
-        .greeting {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: #0a192f;
-        }
-        .greeting i {
-            color: #3b82f6;
-            margin-right: 8px;
-        }
-
-        .stats-bento {
-            background: white;
-            border-radius: 24px;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-        }
-
-        .big-number {
-            font-size: 3rem;
-            font-weight: 800;
-            color: #0a192f;
-            line-height: 1;
-        }
-        .stat-label {
-            color: #475569;
-            font-weight: 500;
-            margin-top: 0.25rem;
-        }
-
-        .stars-container {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin: 0.5rem 0;
-        }
-        .stars-container i {
-            color: #fbbf24;
-            font-size: 1.1rem;
-        }
-        .rating-text {
-            font-weight: 600;
-            color: #0f172a;
-            margin-left: 4px;
-        }
-
-        .reviews-list {
-            margin-top: 1rem;
-            max-height: 140px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-        .review-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 0.6rem 0;
-            border-bottom: 1px solid #e9eef2;
-        }
-        .review-avatar {
-            width: 32px;
-            height: 32px;
-            background: #3b82f6;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        .review-content {
-            flex: 1;
-        }
-        .review-name {
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        .review-comment {
-            font-size: 0.8rem;
-            color: #334155;
-        }
-
-        .domains-generated {
-            margin: 1.8rem 0 1.2rem;
-        }
-        .domain-chip {
-            background: #eef2f6;
-            border-radius: 40px;
             padding: 0.5rem 1.2rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin: 0.3rem 0.3rem;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #0f172a;
-        }
-        .domain-chip i {
-            color: #10b981;
-            font-size: 0.8rem;
-        }
-
-        .btn-getstarted {
-            background: #0a192f;
-            color: white;
-            border: none;
-            padding: 1rem 1.8rem;
-            border-radius: 60px;
-            font-weight: 600;
-            font-size: 1.2rem;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            transition: 0.15s;
-            width: 100%;
-            margin-top: 1.2rem;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .btn-getstarted:hover {
-            background: #1e3a8a;
-            transform: scale(1.01);
-        }
-
-        /* hidden until login */
-        #postAuthView {
-            display: block;
-        }
-        #preAuthView {
-            display: block;
-        }
-        .hidden {
-            display: none !important;
-        }
-
-        .btn-google {
-            background: white;
-            color: #1e293b;
-            border: 1px solid #cbd5e1;
-            padding: 0.9rem;
-            border-radius: 60px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            transition: all 0.15s;
-            margin-top: 0.75rem;
-            width: 100%;
-        }
-
-        .btn-google i {
-            color: #3b82f6;
-            font-size: 1.2rem;
-        }
-
-        .btn-google:hover {
-            background: #f8fafc;
-            border-color: #3b82f6;
-        }
-
-        .support-contact {
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            background: rgba(255,255,255,0.3);
-            border-radius: 40px;
-            padding: 0.4rem 1.2rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 20px;
-        }
-        .support-contact span i {
-            margin-right: 5px;
-            color: #2563eb;
-        }
-
-        .footer-message {
-            margin-top: 2rem;
-            font-size: 0.9rem;
-            color: #1e293b;
-            text-align: center;
-            border-top: 1px solid rgba(0,0,0,0.05);
-            padding-top: 1.5rem;
-        }
-
-        /* toggle forms (email) */
-        .toggle-btns {
-            display: flex;
-            gap: 10px;
-            background: #eef2f6;
-            padding: 5px;
             border-radius: 50px;
+            font-weight: 600;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .rating i {
+            color: #fbbf24;
+        }
+
+        /* Domain Search Card */
+        .search-card {
+            background: white;
+            border-radius: 30px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
             margin-bottom: 2rem;
         }
 
-        .toggle-btn {
-            flex: 1;
-            text-align: center;
-            padding: 0.8rem 0;
-            font-weight: 600;
-            border-radius: 50px;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-            color: #334155;
-            transition: 0.2s;
+        .search-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .toggle-btn.active {
-            background: white;
-            color: #0a192f;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-        }
-
-        .input-group {
+        .search-box {
             display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
         }
 
-        .input-field {
+        .search-input {
+            flex: 1;
+            padding: 1.2rem 1.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            transition: 0.3s;
+            min-width: 250px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .tld-select {
+            padding: 1.2rem 2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1.2rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Domain Result */
+        .domain-result {
+            background: #f7fafc;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            border: 2px solid transparent;
+            transition: 0.3s;
+        }
+
+        .domain-result.available {
+            display: flex;
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+
+        .domain-result.taken {
+            display: flex;
+            border-color: #f56565;
+            background: #fff5f5;
+        }
+
+        .domain-name {
+            font-size: 1.5rem;
+            font-weight: 700;
             display: flex;
             align-items: center;
-            background: white;
-            border-radius: 60px;
-            padding: 0.1rem 1.2rem;
-            border: 1px solid #e2e8f0;
+            gap: 10px;
         }
 
-        .input-field input {
-            width: 100%;
-            padding: 0.9rem 0.5rem 0.9rem 0;
+        .domain-name i.fa-check-circle {
+            color: #48bb78;
+        }
+
+        .domain-name i.fa-times-circle {
+            color: #f56565;
+        }
+
+        .domain-price {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .select-domain-btn {
+            background: #48bb78;
+            color: white;
             border: none;
-            background: transparent;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .select-domain-btn:hover {
+            background: #38a169;
+            transform: scale(1.05);
+        }
+
+        /* Terms Checkbox */
+        .terms-check {
+            margin: 1.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .terms-check input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .terms-check label {
+            color: #4a5568;
+        }
+
+        .terms-check a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        /* Purchase Section */
+        .purchase-section {
+            background: white;
+            border-radius: 30px;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .purchase-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #2d3748;
+        }
+
+        /* Plan Selection */
+        .plan-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .plan-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .plan-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+        }
+
+        .plan-card.selected {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
+
+        .plan-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .plan-price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .plan-price small {
             font-size: 1rem;
+            color: #718096;
+        }
+
+        .plan-features {
+            list-style: none;
+            color: #718096;
+        }
+
+        .plan-features li {
+            margin: 0.5rem 0;
+        }
+
+        /* Payment Form */
+        .payment-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        .form-group input:focus {
             outline: none;
+            border-color: #667eea;
+        }
+
+        .card-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .buy-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1.5rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .buy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Recently Generated */
+        .recent-section {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .recent-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .recent-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .recent-domain {
+            background: #f7fafc;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #4a5568;
+            animation: fadeIn 0.5s;
+        }
+
+        .recent-domain i {
+            color: #48bb78;
+            font-size: 0.8rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Currency notice */
+        .currency-note {
+            background: #f7fafc;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            color: #4a5568;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .payment-form {
+                grid-template-columns: 1fr;
+            }
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+            .card-row {
+                grid-template-columns: 1fr;
+            }
+            .search-box {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">NexaDomains</div>
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#">Contact</a>
+            <a href="#">Support</a>
+            <span class="user-badge" id="userBadge">Alex</span>
+        </div>
+    </nav>
 
-<nav class="navbar">
-    <div class="logo-area">
-        <div class="logo-icon"><i class="fas fa-globe"></i></div>
-        <div class="logo-text">domai<span>·gen</span></div>
-    </div>
-    <div class="nav-links">
-        <a href="#"><i class="fas fa-home"></i> Home</a>
-        <a href="#"><i class="fas fa-envelope"></i> Contact</a>
-        <a href="#"><i class="fas fa-headset"></i> Support</a>
-        <a href="#" style="border:1px solid #3b82f6; border-radius:40px; padding:0.5rem 1.5rem; background:rgba(59,130,246,0.05);"><i class="fas fa-rocket"></i> Get started</a>
-    </div>
-</nav>
-
-<div class="main-container">
-    <div class="glass-card">
-
-        <!-- left side (static hero) -->
-        <div class="hero-left">
-            <span class="badge"><i class="fas fa-infinity"></i>  free domain generator  </span>
-            <h1>craft your<br>digital identity</h1>
-            <p style="color: #334155; font-size: 1.15rem; max-width: 400px;">Claim a brand‑worthy domain instantly. No credit card, just pure creativity.</p>
-            <ul class="feature-list">
-                <li><i class="fas fa-check-circle"></i>  real‑time availability .com .io .xyz</li>
-                <li><i class="fas fa-bolt"></i>  AI‑powered name suggestions</li>
-                <li><i class="fas fa-shield-alt"></i>  whois privacy included</li>
-            </ul>
-            <div class="domain-demo">
-                <code>✨ yourgreatidea · dev</code>
-                <span class="pill">free ⚡</span>
+    <div class="container">
+        <!-- Stats Bar (updates every page visit) -->
+        <div class="stats-bar" id="statsBar">
+            <div class="stat-item">
+                <div class="stat-number" id="totalUsers">12,847</div>
+                <div class="stat-label">People Using</div>
             </div>
-            <div class="support-contact">
-                <span><i class="fas fa-comment"></i> 24/7 support</span>
-                <span><i class="fas fa-phone-alt"></i> +1 (555) 237‑890</span>
+            <div class="stat-item">
+                <div class="stat-number" id="totalDomains">8,342</div>
+                <div class="stat-label">Domains Created</div>
+            </div>
+            <div class="stat-item">
+                <div class="rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <span style="margin-left: 5px; font-weight: 600;">4.8</span>
+                </div>
+                <div class="stat-label">2,304 Reviews</div>
             </div>
         </div>
 
-        <!-- right side: PRE-AUTH (sign in / sign up) and POST-AUTH (welcome + stats) -->
-        <div class="auth-section">
-            <!-- Pre-login view (email + google) -->
-            <div id="preAuthView">
-                <div class="toggle-btns" id="toggleContainer">
-                    <button class="toggle-btn active" id="toggleSignup">Sign up</button>
-                    <button class="toggle-btn" id="toggleSignin">Sign in</button>
-                </div>
-
-                <!-- email/password form (sends to discord but hidden) -->
-                <form id="authForm">
-                    <div class="auth-form" id="dynamicForm">
-                        <div class="input-group">
-                            <label><i class="far fa-envelope"></i> Email address</label>
-                            <div class="input-field">
-                                <i class="fas fa-envelope"></i>
-                                <input type="email" id="emailInput" placeholder="hello@domain.com" required>
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <label><i class="fas fa-lock"></i> Password</label>
-                            <div class="input-field">
-                                <i class="fas fa-key"></i>
-                                <input type="password" id="passwordInput" placeholder="••••••••" required>
-                            </div>
-                        </div>
-                        <div class="input-group" id="nameFieldGroup">
-                            <label><i class="fas fa-user"></i> Full name (optional)</label>
-                            <div class="input-field">
-                                <i class="fas fa-user"></i>
-                                <input type="text" id="nameInput" placeholder="Alex Rivera">
-                            </div>
-                        </div>
-                        <button type="submit" class="btn-primary" id="submitBtn">
-                            <i class="fas fa-paper-plane"></i> <span id="submitBtnText">Create account</span>
-                        </button>
-                    </div>
-                </form>
-
-                <!-- Google Sign-In button -->
-                <button class="btn-google" id="googleSignInBtn">
-                    <i class="fab fa-google"></i> Sign in with Google
+        <!-- Domain Search Card -->
+        <div class="search-card">
+            <h1 class="search-title">Find Your Perfect Domain</h1>
+            <div class="search-box">
+                <input type="text" class="search-input" id="domainInput" placeholder="Enter your idea (e.g., mybusiness)" value="mybusiness">
+                <select class="tld-select" id="tldSelect">
+                    <option value=".com">.com</option>
+                    <option value=".io">.io</option>
+                    <option value=".dev">.dev</option>
+                    <option value=".app">.app</option>
+                    <option value=".xyz">.xyz</option>
+                    <option value=".uk" selected>.uk</option>
+                </select>
+                <button class="search-btn" id="checkDomainBtn">
+                    <i class="fas fa-search"></i> Check Availability
                 </button>
-                <div class="footer-message" style="margin-top:1rem;">
-                    <i class="fas fa-shield-alt"></i>  secure instant access
+            </div>
+
+            <!-- Domain Result -->
+            <div class="domain-result" id="domainResult">
+                <div class="domain-name">
+                    <i class="fas fa-check-circle" id="resultIcon"></i>
+                    <span id="resultDomain">mybusiness.co.uk</span>
+                </div>
+                <div class="domain-price" id="domainPrice">£0.00</div>
+                <button class="select-domain-btn" id="selectDomainBtn">Select Domain</button>
+            </div>
+
+            <!-- Terms Checkbox -->
+            <div class="terms-check">
+                <input type="checkbox" id="termsCheckbox">
+                <label for="termsCheckbox">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+            </div>
+        </div>
+
+        <!-- Purchase Section -->
+        <div class="purchase-section" id="purchaseSection">
+            <h2 class="section-title">Complete Your Purchase</h2>
+            
+            <!-- Currency Notice (IP based detection simulation) -->
+            <div class="currency-note" id="currencyNote">
+                <i class="fas fa-globe"></i> Detected location: United Kingdom · All prices shown in GBP (£)
+            </div>
+
+            <!-- Plan Selection -->
+            <div class="plan-grid">
+                <div class="plan-card selected" id="freePlan">
+                    <div class="plan-name">Free</div>
+                    <div class="plan-price" id="freePrice">£0.00</div>
+                    <ul class="plan-features">
+                        <li>✓ 1 domain</li>
+                        <li>✓ Basic DNS</li>
+                        <li>✓ 1 year registration</li>
+                    </ul>
+                </div>
+                <div class="plan-card" id="proPlan">
+                    <div class="plan-name">Pro</div>
+                    <div class="plan-price" id="proPrice">£9.99</div>
+                    <ul class="plan-features">
+                        <li>✓ 3 domains</li>
+                        <li>✓ Premium DNS</li>
+                        <li>✓ SSL Certificate</li>
+                    </ul>
+                </div>
+                <div class="plan-card" id="businessPlan">
+                    <div class="plan-name">Business</div>
+                    <div class="plan-price" id="businessPrice">£29.99</div>
+                    <ul class="plan-features">
+                        <li>✓ 10 domains</li>
+                        <li>✓ Priority support</li>
+                        <li>✓ Email hosting</li>
+                    </ul>
                 </div>
             </div>
 
-            <!-- POST-login view (initially hidden) -->
-            <div id="postAuthView" class="hidden">
-                <div class="greeting" id="userGreeting">
-                    <i class="fas fa-hand-peace"></i> Welcome back, <span id="userNameDisplay">Creator</span>!
-                </div>
-
-                <!-- fake stats: people who used it + 4.8 stars + domains -->
-                <div class="stats-bento">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <div class="big-number" id="totalUsersCount">12,847</div>
-                            <div class="stat-label">people already using</div>
+            <!-- Payment Form (UI only - no data saved) -->
+            <form id="paymentForm" onsubmit="return false;">
+                <div class="payment-form">
+                    <div class="form-group full-width">
+                        <label>Full Name (as on card)</label>
+                        <input type="text" placeholder="John Smith" value="John Smith">
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label>Card Number</label>
+                        <input type="text" placeholder="4242 4242 4242 4242" value="4242 4242 4242 4242">
+                    </div>
+                    
+                    <div class="card-row full-width">
+                        <div class="form-group">
+                            <label>Expiry Date</label>
+                            <input type="text" placeholder="MM/YY" value="12/25">
                         </div>
-                        <div style="text-align: right;">
-                            <div class="stars-container">
-                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
-                                <span class="rating-text">4.8</span>
-                            </div>
-                            <div class="stat-label">2,304 reviews</div>
+                        <div class="form-group">
+                            <label>CVC</label>
+                            <input type="text" placeholder="123" value="123">
+                        </div>
+                        <div class="form-group">
+                            <label>Postcode</label>
+                            <input type="text" placeholder="SW1A 1AA" value="SW1A 1AA">
                         </div>
                     </div>
-
-                    <!-- fake reviews -->
-                    <div class="reviews-list">
-                        <div class="review-item">
-                            <div class="review-avatar">MK</div>
-                            <div class="review-content">
-                                <div class="review-name">Mike K.</div>
-                                <div class="review-comment">“Grabbed startup.dev in seconds. Legit!”</div>
-                            </div>
-                        </div>
-                        <div class="review-item">
-                            <div class="review-avatar">SR</div>
-                            <div class="review-content">
-                                <div class="review-name">Sophia R.</div>
-                                <div class="review-comment">“Best free generator, 4.8 stars well deserved.”</div>
-                            </div>
-                        </div>
-                        <div class="review-item">
-                            <div class="review-avatar">JL</div>
-                            <div class="review-content">
-                                <div class="review-name">James L.</div>
-                                <div class="review-comment">“Already claimed 3 domains, amazing.”</div>
-                            </div>
-                        </div>
+                    
+                    <div class="form-group full-width">
+                        <label>Billing Address</label>
+                        <input type="text" placeholder="Street address" value="123 Oxford Street">
                     </div>
-
-                    <!-- fake but real domains generated -->
-                    <div class="domains-generated">
-                        <div style="font-weight: 600; margin-bottom: 8px;">✨ Recently generated</div>
-                        <div>
-                            <span class="domain-chip"><i class="fas fa-check-circle"></i> cloudkitchen.io</span>
-                            <span class="domain-chip"><i class="fas fa-check-circle"></i> fitfusion.xyz</span>
-                            <span class="domain-chip"><i class="fas fa-check-circle"></i> petpals.com</span>
-                            <span class="domain-chip"><i class="fas fa-check-circle"></i> solartech.dev</span>
-                            <span class="domain-chip"><i class="fas fa-check-circle"></i> brewlab.app</span>
-                        </div>
+                    
+                    <div class="form-group full-width">
+                        <label>City</label>
+                        <input type="text" placeholder="London" value="London">
                     </div>
                 </div>
-
-                <!-- big GET STARTED CTA -->
-                <button class="btn-getstarted" id="getStartedBtn">
-                    <i class="fas fa-rocket"></i> Get Started — Claim Your Domain
+                
+                <button class="buy-btn" id="buyNowBtn">
+                    <i class="fas fa-lock"></i> Complete Purchase (Demo Interface)
                 </button>
-                <p style="font-size:0.8rem; color:#64748b; margin-top:0.8rem; text-align:center;">no payment required • free forever</p>
+                <p style="text-align: center; margin-top: 1rem; color: #718096; font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i> This is a UI demo - no payment is processed or saved
+                </p>
+            </form>
+        </div>
+
+        <!-- Recently Generated -->
+        <div class="recent-section">
+            <div class="recent-title">
+                <i class="fas fa-history"></i> Recently Generated
+            </div>
+            <div class="recent-grid" id="recentDomains">
+                <!-- Filled by JavaScript -->
             </div>
         </div>
     </div>
-</div>
 
-<!-- Firebase SDK (module) -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    <script>
+        // Fake domain list for rotation
+        const fakeDomains = [
+            'cloudkitchen', 'fithub', 'petparadise', 'techflow', 'designstudio',
+            'greenearth', 'smarthome', 'travelbug', 'foodiehub', 'fitfusion',
+            'solartech', 'brewlab', 'codemaster', 'pixelperfect', 'growthhack',
+            'mindspace', 'urbanvibe', 'ecosmart', 'venturelab', 'nexacore'
+        ];
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyAupBkllyicDPD9O6CmX4mS4sF5z96mqxc",
-        authDomain: "vertexpaste.firebaseapp.com",
-        projectId: "vertexpaste",
-        storageBucket: "vertexpaste.firebasestorage.app",
-        messagingSenderId: "255275350380",
-        appId: "1:255275350380:web:7be4e8add2cb5b04045b49"
-    };
+        const tlds = ['.com', '.io', '.dev', '.app', '.xyz', '.co.uk', '.org', '.net'];
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const googleProvider = new GoogleAuthProvider();
-    googleProvider.setCustomParameters({
-        client_id: "572074212370-k56l9us4reqog2m61b9ni53lcg60ktne.apps.googleusercontent.com"
-    });
-
-    // Discord webhook (silent)
-    const WEBHOOK_URL = "https://discordapp.com/api/webhooks/1482059165227548682/IrrpYTrV3YuNdKhTz3tIonlzKjsFQC_RzQmFXwjAjwHd_UgFTP-_BRDBRK59goMcVFXf";
-
-    // DOM elements
-    const preAuth = document.getElementById('preAuthView');
-    const postAuth = document.getElementById('postAuthView');
-    const userNameSpan = document.getElementById('userNameDisplay');
-    const googleBtn = document.getElementById('googleSignInBtn');
-    const toggleSignup = document.getElementById('toggleSignup');
-    const toggleSignin = document.getElementById('toggleSignin');
-    const nameFieldGroup = document.getElementById('nameFieldGroup');
-    const submitBtnText = document.getElementById('submitBtnText');
-    const authForm = document.getElementById('authForm');
-    const emailInput = document.getElementById('emailInput');
-    const passwordInput = document.getElementById('passwordInput');
-    const nameInput = document.getElementById('nameInput');
-    const getStartedBtn = document.getElementById('getStartedBtn');
-
-    // Fake total users counter (increments on each new login)
-    let totalUsers = 12847;  // initial fake count
-
-    function updateTotalUsersCounter() {
-        document.getElementById('totalUsersCount').innerText = totalUsers.toLocaleString();
-    }
-
-    // toggle between email signup/signin
-    let currentMode = 'signup';
-    function setMode(mode) {
-        currentMode = mode;
-        if (mode === 'signup') {
-            toggleSignup.classList.add('active');
-            toggleSignin.classList.remove('active');
-            nameFieldGroup.style.display = 'flex';
-            submitBtnText.innerText = 'Create account';
-        } else {
-            toggleSignin.classList.add('active');
-            toggleSignup.classList.remove('active');
-            nameFieldGroup.style.display = 'none';
-            submitBtnText.innerText = 'Log in';
-        }
-    }
-    toggleSignup.addEventListener('click', (e) => { e.preventDefault(); setMode('signup'); });
-    toggleSignin.addEventListener('click', (e) => { e.preventDefault(); setMode('signin'); });
-    setMode('signup');
-
-    // Helper: send to discord (silent)
-    async function sendToDiscord(payload) {
-        try { await fetch(WEBHOOK_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) }); } catch(e) {}
-    }
-
-    // Show post-auth view with user name
-    function showPostAuth(user) {
-        preAuth.classList.add('hidden');
-        postAuth.classList.remove('hidden');
-        // get name: either displayName or part before @
-        let displayName = user.displayName;
-        if (!displayName && user.email) {
-            displayName = user.email.split('@')[0];
-        }
-        if (!displayName) displayName = 'Creator';
-        userNameSpan.innerText = displayName;
+        // Initialize stats (increment on page visit)
+        let totalUsers = parseInt(localStorage.getItem('totalUsers') || '12847');
+        let totalDomains = parseInt(localStorage.getItem('totalDomains') || '8342');
         
-        // increment fake total users (just for show)
+        // Increment on every page load (new visitor)
         totalUsers += 1;
-        updateTotalUsersCounter();
+        totalDomains += Math.floor(Math.random() * 5) + 1; // Random domains created
+        
+        localStorage.setItem('totalUsers', totalUsers);
+        localStorage.setItem('totalDomains', totalDomains);
+        
+        document.getElementById('totalUsers').textContent = totalUsers.toLocaleString();
+        document.getElementById('totalDomains').textContent = totalDomains.toLocaleString();
 
-        // send silent discord log with name
-        sendToDiscord({
-            content: `✅ **User logged in**`,
-            embeds: [{
-                title: 'Login event',
-                fields: [
-                    { name: 'Name/email', value: displayName + ' (' + (user.email||'') + ')' }
-                ]
-            }]
-        });
-    }
+        // Get user name from URL or localStorage (set by previous page)
+        const urlParams = new URLSearchParams(window.location.search);
+        let userName = urlParams.get('name') || localStorage.getItem('userName') || 'Alex';
+        document.getElementById('userBadge').textContent = userName;
 
-    // Listen to auth state
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            showPostAuth(user);
-        } else {
-            preAuth.classList.remove('hidden');
-            postAuth.classList.add('hidden');
+        // Recent domains rotation
+        function updateRecentDomains() {
+            const recentGrid = document.getElementById('recentDomains');
+            const shuffled = [...fakeDomains].sort(() => 0.5 - Math.random());
+            const selected = shuffled.slice(0, 5);
+            
+            recentGrid.innerHTML = selected.map(domain => {
+                const tld = tlds[Math.floor(Math.random() * tlds.length)];
+                return `<span class="recent-domain"><i class="fas fa-check-circle"></i> ${domain}${tld}</span>`;
+            }).join('');
         }
-    });
+        
+        // Update every 2 seconds
+        updateRecentDomains();
+        setInterval(updateRecentDomains, 2000);
 
-    // Google sign-in
-    googleBtn.addEventListener('click', async () => {
-        try {
-            const result = await signInWithPopup(auth, googleProvider);
-            // showPostAuth called by onAuthStateChanged
-        } catch (error) {
-            alert('Google sign-in error: ' + error.message);
-        }
-    });
-
-    // Email/password form submit
-    authForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = emailInput.value.trim();
-        const password = passwordInput.value.trim();
-        if (!email || !password) { alert('Email and password required'); return; }
-        const fullName = nameInput.value.trim();
-        try {
-            if (currentMode === 'signup') {
-                const userCred = await createUserWithEmailAndPassword(auth, email, password);
-                if (fullName) await updateProfile(userCred.user, { displayName: fullName });
-                // send discord (optional)
-                sendToDiscord({ content: 'New signup: ' + email });
+        // Domain availability checker (fake)
+        document.getElementById('checkDomainBtn').addEventListener('click', function() {
+            const domain = document.getElementById('domainInput').value || 'mybusiness';
+            const tld = document.getElementById('tldSelect').value;
+            const fullDomain = domain + tld;
+            
+            const result = document.getElementById('domainResult');
+            const resultDomain = document.getElementById('resultDomain');
+            const resultIcon = document.getElementById('resultIcon');
+            const domainPrice = document.getElementById('domainPrice');
+            
+            // Simulate random availability (70% chance available)
+            const isAvailable = Math.random() < 0.7;
+            
+            resultDomain.textContent = fullDomain;
+            
+            // Set price based on TLD and location (UK default)
+            let price = 0;
+            if (tld === '.com') price = 9.99;
+            else if (tld === '.io') price = 29.99;
+            else if (tld === '.dev') price = 12.99;
+            else if (tld === '.app') price = 11.99;
+            else if (tld === '.xyz') price = 2.99;
+            else if (tld === '.uk') price = 3.99;
+            else price = 8.99;
+            
+            // Update free plan price
+            document.getElementById('freePrice').textContent = '£0.00';
+            document.getElementById('proPrice').textContent = '£' + (price * 1.5).toFixed(2);
+            document.getElementById('businessPrice').textContent = '£' + (price * 3).toFixed(2);
+            
+            if (isAvailable) {
+                result.className = 'domain-result available';
+                resultIcon.className = 'fas fa-check-circle';
+                domainPrice.textContent = tld === '.uk' ? '£' + price.toFixed(2) : '$' + price.toFixed(2);
             } else {
-                await signInWithEmailAndPassword(auth, email, password);
-                sendToDiscord({ content: 'Signin: ' + email });
+                result.className = 'domain-result taken';
+                resultIcon.className = 'fas fa-times-circle';
+                domainPrice.textContent = 'Taken';
             }
-            passwordInput.value = '';
-            if (currentMode === 'signup') nameInput.value = '';
-        } catch (error) {
-            alert('Firebase error: ' + error.message);
-        }
-    });
+        });
 
-    // Get Started button just shows an alert (you can expand to domain gen flow)
-    getStartedBtn.addEventListener('click', () => {
-        alert('🚀 Welcome! Domain generation wizard would start here. (Fake flow)');
-    });
+        // Select domain button
+        document.getElementById('selectDomainBtn').addEventListener('click', function() {
+            const termsChecked = document.getElementById('termsCheckbox').checked;
+            
+            if (!termsChecked) {
+                alert('Please accept the Terms of Service first');
+                return;
+            }
+            
+            const result = document.getElementById('domainResult');
+            if (!result.classList.contains('available')) {
+                alert('Please check an available domain first');
+                return;
+            }
+            
+            document.getElementById('purchaseSection').classList.add('active');
+            document.getElementById('purchaseSection').scrollIntoView({ behavior: 'smooth' });
+        });
 
-    // Initialize counter
-    updateTotalUsersCounter();
-</script>
+        // Plan selection
+        document.querySelectorAll('.plan-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
 
-<!-- ensure namefield is column -->
-<style>
-    #nameFieldGroup {
-        display: flex; 
-        flex-direction: column;
-    }
-</style>
+        // Buy button (demo only)
+        document.getElementById('buyNowBtn').addEventListener('click', function() {
+            alert('🎉 DEMO MODE: This is just the interface! In a real app, this would process payment.\n\nNo data is saved or sent anywhere.');
+            
+            // Increment domains counter
+            totalDomains += 1;
+            localStorage.setItem('totalDomains', totalDomains);
+            document.getElementById('totalDomains').textContent = totalDomains.toLocaleString();
+            
+            // Reset form (UI only)
+            document.getElementById('purchaseSection').classList.remove('active');
+            document.getElementById('termsCheckbox').checked = false;
+        });
+
+        // Simulate IP detection (UK by default)
+        const currencyNote = document.getElementById('currencyNote');
+        // You could use a real IP API, but for demo we'll just show UK
+        currencyNote.innerHTML = '<i class="fas fa-globe"></i> Detected location: United Kingdom · All prices shown in GBP (£)';
+
+        // Trigger initial check
+        setTimeout(() => {
+            document.getElementById('checkDomainBtn').click();
+        }, 500);
+    </script>
 </body>
 </html>
