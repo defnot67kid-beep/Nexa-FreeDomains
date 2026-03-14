@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIVE CLONER · auto embed + lag guard</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #0b0b0b; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; color: #eee; }
+        #app {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            font-weight: 400;
+            font-size: 2.3rem;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.2rem;
+        }
+        h1 span { color: #ff4d4d; font-weight: 700; text-shadow: 0 0 8px #ff000080; }
+        .sub {
+            color: #aaa;
+            margin-bottom: 30px;
+            border-left: 4px solid #ff4d4d;
+            padding-left: 16px;
+            font-weight: 300;
+        }
+        .control-panel {
+            background: #1e1e1e;
+            border-radius: 32px;
+            padding: 28px 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+            border: 1px solid #2e2e2e;
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            gap: 25px;
+        }
+        .input-group {
+            flex: 3 1 350px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #ff9999;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .input-group input {
+            width: 100%;
+            background: #2a2a2a;
+            border: 2px solid #3a3a3a;
+            border-radius: 60px;
+            padding: 16px 22px;
+            font-size: 1rem;
+            color: white;
+            outline: none;
+            transition: 0.2s;
+        }
+        .input-group input:focus {
+            border-color: #ff4d4d;
+            background: #222;
+        }
+        .clone-options {
+            display: flex;
+            flex: 1 1 auto;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .count-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #252525;
+            padding: 8px 18px;
+            border-radius: 60px;
+            border: 1px solid #3f3f3f;
+        }
+        .count-box label {
+            font-weight: 600;
+            color: #ffb3b3;
+        }
+        .count-box input {
+            width: 70px;
+            background: #1a1a1a;
+            border: 1px solid #4a4a4a;
+            border-radius: 40px;
+            padding: 10px 14px;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        .count-box input:focus { border-color: #ff8080; }
+        .actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        button {
+            background: #2f2f2f;
+            border: none;
+            color: #ddd;
+            padding: 14px 32px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #404040;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        button.primary {
+            background: #cc2b2b;
+            color: white;
+            border: 1px solid #ff6a6a;
+            box-shadow: 0 6px 14px #cc2b2b40;
+        }
+        button.primary:hover {
+            background: #e03a3a;
+            transform: scale(1.02);
+            border-color: #ffa3a3;
+        }
+        button.warning {
+            background: #3d2b2b;
+            color: #ffa7a7;
+            border-color: #a14545;
+        }
+        button.warning:hover {
+            background: #532f2f;
+            color: #ffcece;
+        }
+        button:active { transform: scale(0.98); }
+        .lag-toggle {
+            background: #232323;
+            padding: 6px 20px;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #4f4f4f;
+        }
+        .lag-toggle input {
+            width: 20px;
+            height: 20px;
+            accent-color: #ff4d4d;
+        }
+        .stats {
+            background: #181818;
+            border-radius: 30px;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border: 1px solid #333;
+            flex-wrap: wrap;
+        }
+        .stat-badge {
+            background: #252525;
+            border-radius: 60px;
+            padding: 10px 28px;
+            font-size: 1.2rem;
+            border-left: 4px solid #ff4d4d;
+        }
+        .stat-badge span {
+            font-weight: 700;
+            color: #ffa3a3;
+        }
+        #stopAllBtn {
+            background: #2c1f1f;
+            color: #ff8a8a;
+            border-color: #8b3f3f;
+        }
+        #gridContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 18px;
+            transition: 0.2s;
+            margin-top: 15px;
+        }
+        .embed-card {
+            background: #151515;
+            border-radius: 24px;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            position: relative;
+            border: 2px solid #2f2f2f;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+            transition: 0.15s;
+        }
+        .embed-card:hover {
+            border-color: #ff7b7b;
+        }
+        .embed-card iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            pointer-events: none; /* blocks clicks, keeps fullscreen clean */
+        }
+        .embed-card .badge {
+            position: absolute;
+            bottom: 6px;
+            right: 10px;
+            background: #000000b0;
+            backdrop-filter: blur(4px);
+            color: #ffcaca;
+            font-size: 0.7rem;
+            padding: 4px 12px;
+            border-radius: 40px;
+            border: 1px solid #ff8080;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .lag-notice {
+            background: #332020;
+            border: 1px solid #ff6f6f;
+            color: #ffbaba;
+            border-radius: 40px;
+            padding: 12px 28px;
+            text-align: center;
+            font-weight: 500;
+            margin: 10px 0 20px;
+            font-size: 1.1rem;
+            animation: pulseBg 1.5s infinite;
+        }
+        @keyframes pulseBg {
+            0% { background-color: #332020; }
+            50% { background-color: #552222; }
+            100% { background-color: #332020; }
+        }
+        .footer-note {
+            margin-top: 40px;
+            color: #555;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+        .disabled-btn {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <h1>🔴 <span>CLONE</span> · STREAM EMBEDDER</h1>
+    <div class="sub">paste youtube live · autoplay · lag detection kills duplicates</div>
+
+    <div class="control-panel">
+        <div class="input-group">
+            <label>🎬 YOUTUBE LIVE (or any YT link)</label>
+            <input type="text" id="liveInput" placeholder="https://www.youtube.com/watch?v=21X5lGlDOfg  (NASA live)" value="https://www.youtube.com/watch?v=21X5lGlDOfg">
+        </div>
+        <div class="clone-options">
+            <div class="count-box">
+                <label>🔢 COUNT</label>
+                <input type="number" id="cloneCount" min="1" max="100" value="4">
+            </div>
+            <div class="lag-toggle">
+                <input type="checkbox" id="lagGuardCheck" checked> 
+                <label for="lagGuardCheck" style="color:#ffaeae;">🛡️ stop if lag (fps drop)</label>
+            </div>
+        </div>
+        <div class="actions">
+            <button class="primary" id="cloneBtn">⚡ CLONE & EMBED</button>
+            <button id="stopAllBtn" class="warning">⏹️ STOP ALL / CLEAR</button>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat-badge"><span id="activeCount">0</span> active clones</div>
+        <div id="lagMessage" style="color:#ffa4a4; font-weight:400;"></div>
+        <div style="color:#aaa;">max 100 · autoplay forced</div>
+    </div>
+
+    <!-- grid where clones live -->
+    <div id="gridContainer"></div>
+    <div class="footer-note">⚠️ all iframes autoplay? embedded players try to autoplay · if lag guard detects frame drop > 20% for 2s → cloning stops & new embeds blocked. existing keep playing.</div>
+</div>
+
+<script>
+(function() {
+    // DOM elements
+    const liveInput = document.getElementById('liveInput');
+    const cloneCountInput = document.getElementById('cloneCount');
+    const lagGuardCheck = document.getElementById('lagGuardCheck');
+    const cloneBtn = document.getElementById('cloneBtn');
+    const stopAllBtn = document.getElementById('stopAllBtn');
+    const gridContainer = document.getElementById('gridContainer');
+    const activeCountSpan = document.getElementById('activeCount');
+    const lagMessageDiv = document.getElementById('lagMessage');
+
+    // state
+    let activeEmbeds = 0;                // total iframes placed
+    let lagTriggered = false;            // becomes true if lag detected
+    let lagDisabled = false;              // if true, new clones blocked
+    let animationFrame;
+    let lastFrameTime = performance.now();
+    let frameCount = 0;
+    let fps = 60;
+    let lowFpsStreak = 0;
+    const FPS_THRESHOLD = 40;            // below 40 fps = lag
+    const REQUIRED_STREAK = 5;            // ~ 5 samples (2s) to confirm lag
+
+    // === LAG DETECTION (FPS METER) ===
+    function checkFPS(now) {
+        frameCount++;
+        if (now - lastFrameTime >= 200) { // sample every 200ms
+            fps = Math.round((frameCount * 1000) / (now - lastFrameTime));
+            frameCount = 0;
+            lastFrameTime = now;
+
+            // only evaluate if lag guard enabled
+            if (lagGuardCheck.checked && !lagTriggered && activeEmbeds > 0) {
+                if (fps < FPS_THRESHOLD) {
+                    lowFpsStreak++;
+                    if (lowFpsStreak >= REQUIRED_STREAK) {
+                        // LAG TRIGGERED!
+                        lagTriggered = true;
+                        lagDisabled = true;
+                        lagMessageDiv.innerText = `⚠️ LAG DETECTED (FPS ${fps}) — cloning stopped. refresh page to reset.`;
+                        console.warn('LAG GUARD ACTIVATED, blocking new clones');
+                        // do not remove existing embeds
+                    }
+                } else {
+                    // if fps recovered, reset streak but keep disabled once true
+                    if (!lagTriggered) lowFpsStreak = 0;
+                }
+            } else {
+                // if disabled, reset streak
+                lowFpsStreak = 0;
+            }
+        }
+        animationFrame = requestAnimationFrame(checkFPS);
+    }
+    animationFrame = requestAnimationFrame(checkFPS);
+
+    // === EXTRACT YOUTUBE ID (robust) ===
+    function extractYouTubeID(url) {
+        if (!url) return null;
+        // try to get ID from various patterns
+        const patterns = [
+            /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/shorts\/|youtube\.com\/live\/)([^&?#]+)/,
+            /youtube\.com\/watch\?.*[?&]v=([^&?#]+)/,
+            /youtube\.com\/live\/([^&?#]+)/
+        ];
+        for (let p of patterns) {
+            const match = url.match(p);
+            if (match && match[1]) return match[1];
+        }
+        // if it's already a clean ID (11 chars)
+        if (/^[a-zA-Z0-9_-]{11}$/.test(url)) return url;
+        return null;
+    }
+
+    // === create single embed iframe (autoplay forced) ===
+    function createEmbedElement(videoId) {
+        const card = document.createElement('div');
+        card.className = 'embed-card';
+
+        // construct youtube embed with autoplay=1 & mute (to satisfy autoplay policies)
+        // some browsers need mute, but we try without first? use mute=1 & then unmute not possible. but we want sound.
+        // to maximize autoplay chance: use mute=0, but if fails, user has to click. we force iframe with &autoplay=1&mute=0
+        const iframe = document.createElement('iframe');
+        // src: enablejsapi not needed, autoplay=1, mute=0 (allow sound but may get muted by browser)
+        // we also add &playsinline=1 for mobile
+        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&playsinline=1&controls=0&disablekb=1&fs=0&modestbranding=1&rel=0&loop=1&playlist=${videoId}`;
+        iframe.allow = "autoplay; fullscreen";
+        iframe.setAttribute('allowfullscreen', 'false'); // we keep fullscreen off to avoid confusion, but can be enabled
+        iframe.setAttribute('title', 'youtube clone');
+        iframe.setAttribute('frameborder', '0');
+        
+        // pointer-events already disabled via css .embed-card iframe
+        card.appendChild(iframe);
+
+        // tiny badge
+        const badge = document.createElement('div');
+        badge.className = 'badge';
+        badge.innerText = '🔴 LIVE CLONE';
+        card.appendChild(badge);
+        return card;
+    }
+
+    // === render clones up to count (if lag not disabled) ===
+    function renderClones(videoId, requestedCount) {
+        if (!videoId) {
+            alert('Invalid YouTube link — could not extract video ID');
+            return false;
+        }
+
+        // clamp count
+        let count = Math.min(100, Math.max(1, requestedCount));
+        
+        // if lag disabled, adjust count to not add more, but we still display existing ones
+        if (lagDisabled) {
+            lagMessageDiv.innerText = '🚫 cloning frozen due to previous lag. refresh to reset.';
+            return false;
+        }
+
+        // remove everything (clear all existing)
+        gridContainer.innerHTML = '';
+        activeEmbeds = 0;
+
+        // create new embeds
+        for (let i = 0; i < count; i++) {
+            const embed = createEmbedElement(videoId);
+            gridContainer.appendChild(embed);
+            activeEmbeds++;
+        }
+
+        activeCountSpan.innerText = activeEmbeds;
+        return true;
+    }
+
+    // === STOP ALL (clear grid) ===
+    function stopAll() {
+        gridContainer.innerHTML = '';
+        activeEmbeds = 0;
+        activeCountSpan.innerText = '0';
+        lagMessageDiv.innerText = '';
+        // we DO NOT reset lagTriggered / lagDisabled — that persists until refresh
+        // but if user clears, they might want to start over? we can reset disable flag manually? 
+        // to be safe: lagDisabled remains, but manual override: if user clears, we reset lag flags.
+        // because they may want to restart after stopping.
+        lagTriggered = false;
+        lagDisabled = false;
+        lowFpsStreak = 0;
+        lagMessageDiv.innerText = '';
+        console.log('stopped all, lag guard reset');
+    }
+
+    // === main clone action ===
+    function handleClone() {
+        const rawUrl = liveInput.value.trim();
+        const videoId = extractYouTubeID(rawUrl);
+        if (!videoId) {
+            alert('Cannot detect YouTube video ID. Please check the link.');
+            return;
+        }
+
+        let count = parseInt(cloneCountInput.value, 10);
+        if (isNaN(count) || count < 1) count = 1;
+        if (count > 100) count = 100;
+
+        // if lag already disabled, block new cloning but show message
+        if (lagDisabled) {
+            lagMessageDiv.innerText = '⛔ clone blocked — lag condition active. refresh page to reset.';
+            return;
+        }
+
+        const success = renderClones(videoId, count);
+        if (success) {
+            // optional: update placeholder
+        }
+    }
+
+    // === event listeners ===
+    cloneBtn.addEventListener('click', () => {
+        handleClone();
+    });
+
+    stopAllBtn.addEventListener('click', () => {
+        stopAll();
+    });
+
+    // optional: input enter
+    liveInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleClone();
+    });
+
+    // Initialize example on page load (optional)
+    window.addEventListener('load', () => {
+        // just set an example, but don't auto-clone
+        activeCountSpan.innerText = '0';
+    });
+
+    // cleanup animation frame on page unload (optional)
+    window.addEventListener('beforeunload', () => {
+        if (animationFrame) cancelAnimationFrame(animationFrame);
+    });
+
+    // expose for console fun
+    window.debug = {
+        forceLag: () => { lagDisabled = true; lagTriggered = true; lagMessageDiv.innerText = '⚠️ manual lag trigger'; },
+        resetLag: () => { lagDisabled = false; lagTriggered = false; lowFpsStreak = 0; lagMessageDiv.innerText = ''; }
+    };
+})();
+</script>
+
+<!-- additional note: if embeds don't autoplay, browser may block; but we set &autoplay=1. right click context disabled via css pointer-events, but sound may require user gesture. That's the best we can do. -->
+</body>
+</html>
