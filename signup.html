@@ -799,15 +799,16 @@
                         method: 'email'
                     }, 'New Signup');
                     
-                    showSuccess('Account created! Redirecting to domain generator...');
+                    showSuccess('Account created! Redirecting to domain creator...');
                     
                     // Store user info in session
                     sessionStorage.setItem('userEmail', email);
                     sessionStorage.setItem('userName', name);
+                    sessionStorage.setItem('userId', userCred.user.uid);
                     
-                    // Redirect after delay
+                    // Redirect to create.html after delay
                     setTimeout(() => {
-                        window.location.href = 'domain-generator.html';
+                        window.location.href = 'create.html';
                     }, 2000);
                     
                 } else {
@@ -822,14 +823,16 @@
                         method: 'email'
                     }, 'Sign In');
                     
-                    showSuccess('Signed in successfully! Redirecting...');
+                    showSuccess('Signed in successfully! Redirecting to domain creator...');
                     
                     // Store user info
                     sessionStorage.setItem('userEmail', email);
+                    sessionStorage.setItem('userName', userCred.user.displayName || email.split('@')[0]);
+                    sessionStorage.setItem('userId', userCred.user.uid);
                     
-                    // Redirect after delay
+                    // Redirect to create.html after delay
                     setTimeout(() => {
-                        window.location.href = 'domain-generator.html';
+                        window.location.href = 'create.html';
                     }, 1500);
                 }
                 
@@ -886,14 +889,15 @@
                     method: 'google'
                 }, 'New Signup (Google)');
                 
-                showSuccess('Signed in with Google! Redirecting...');
+                showSuccess('Signed in with Google! Redirecting to domain creator...');
                 
                 // Store user info
                 sessionStorage.setItem('userEmail', result.user.email);
-                sessionStorage.setItem('userName', result.user.displayName);
+                sessionStorage.setItem('userName', result.user.displayName || result.user.email.split('@')[0]);
+                sessionStorage.setItem('userId', result.user.uid);
                 
                 setTimeout(() => {
-                    window.location.href = 'domain-generator.html';
+                    window.location.href = 'create.html';
                 }, 1500);
                 
             } catch (error) {
@@ -908,8 +912,8 @@
         // Check if already logged in
         auth.onAuthStateChanged((user) => {
             if (user) {
-                // Already logged in, redirect to generator
-                window.location.href = 'domain-generator.html';
+                // Already logged in, redirect to create.html
+                window.location.href = 'create.html';
             }
         });
 
@@ -926,19 +930,6 @@
             input.addEventListener('blur', () => {
                 input.parentElement.style.borderColor = '#e2e8f0';
             });
-        });
-
-        // Password strength indicator (optional)
-        passwordInput.addEventListener('input', () => {
-            if (currentMode === 'signup' && passwordInput.value.length > 0) {
-                const strength = passwordInput.value.length >= 8 ? 'Strong' : 
-                                passwordInput.value.length >= 6 ? 'Medium' : 'Weak';
-                
-                let color = passwordInput.value.length >= 8 ? '#10b981' :
-                           passwordInput.value.length >= 6 ? '#f59e0b' : '#ef4444';
-                
-                // Could add visual indicator here
-            }
         });
     </script>
 </body>
