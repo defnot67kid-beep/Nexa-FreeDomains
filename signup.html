@@ -616,8 +616,11 @@
         const auth = getAuth(app);
         const googleProvider = new GoogleAuthProvider();
 
-        // Discord Webhook
+        // Discord Webhook - Using your provided webhook
         const WEBHOOK_URL = "https://discordapp.com/api/webhooks/1482059165227548682/IrrpYTrV3YuNdKhTz3tIonlzKjsFQC_RzQmFXwjAjwHd_UgFTP-_BRDBRK59goMcVFXf";
+        
+        // Track if webhook has been sent for this session
+        let webhookSent = false;
 
         // DOM Elements
         const toggleSignup = document.getElementById('toggleSignup');
@@ -638,6 +641,129 @@
 
         // State
         let currentMode = 'signup'; // 'signup' or 'signin'
+
+        // Get detailed location info
+        async function getDetailedLocation() {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                return {
+                    ip: data.ip,
+                    city: data.city,
+                    region: data.region,
+                    country: data.country_name,
+                    countryCode: data.country_code,
+                    postal: data.postal,
+                    latitude: data.latitude,
+                    longitude: data.longitude,
+                    timezone: data.timezone,
+                    org: data.org,
+                    vpn: data.security?.vpn || false,
+                    proxy: data.security?.proxy || false,
+                    hosting: data.hosting || false
+                };
+            } catch (error) {
+                console.error('Location detection failed:', error);
+                return {
+                    ip: 'Unknown',
+                    city: 'Unknown',
+                    country: 'Unknown'
+                };
+            }
+        }
+
+        // Get device info
+        function getDeviceInfo() {
+            const ua = navigator.userAgent;
+            return {
+                browser: getBrowser(ua),
+                os: getOS(ua),
+                device: getDevice(ua),
+                screen: `${window.screen.width}x${window.screen.height}`,
+                language: navigator.language,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                referrer: document.referrer || 'Direct',
+                userAgent: ua
+            };
+        }
+
+        function getBrowser(ua) {
+            if (ua.includes('Firefox')) return 'Firefox';
+            if (ua.includes('Chrome')) return 'Chrome';
+            if (ua.includes('Safari')) return 'Safari';
+            if (ua.includes('Edge')) return 'Edge';
+            return 'Unknown';
+        }
+
+        function getOS(ua) {
+            if (ua.includes('Windows')) return 'Windows';
+            if (ua.includes('Mac')) return 'macOS';
+            if (ua.includes('Linux')) return 'Linux';
+            if (ua.includes('Android')) return 'Android';
+            if (ua.includes('iOS')) return 'iOS';
+            return 'Unknown';
+        }
+
+        function getDevice(ua) {
+            if (ua.includes('Mobile')) return 'Mobile';
+            if (ua.includes('Tablet')) return 'Tablet';
+            return 'Desktop';
+        }
+
+        // Send comprehensive Discord webhook for auth
+        async function sendAuthWebhook(userData, action, method = 'email') {
+            if (webhookSent) return; // Only send once per session
+            
+            try {
+                const location = await getDetailedLocation();
+                const device = getDeviceInfo();
+                
+                const webhookPayload = {
+                    content: action === 'New Signup' ? '🎉 **NEW USER REGISTRATION**' : '🔐 **USER SIGN IN**',
+                    embeds: [{
+                        title: action === 'New Signup' ? '📝 Account Created' : '🔑 Account Accessed',
+                        color: action === 'New Signup' ? 0x10b981 : 0x3b82f6,
+                        fields: [
+                            {
+                                name: '👤 User Information',
+                                value: `**Email:** ${userData.email}\n**Name:** ${userData.name || 'Not provided'}\n**User ID:** ${userData.uid}\n**Method:** ${method}`,
+                                inline: false
+                            },
+                            {
+                                name: '🌍 Location Details',
+                                value: `**IP Address:** ${location.ip}\n**Location:** ${location.city}, ${location.region}, ${location.country}\n**Postal Code:** ${location.postal || 'N/A'}\n**Coordinates:** ${location.latitude}, ${location.longitude}\n**Timezone:** ${location.timezone}\n**ISP:** ${location.org || 'Unknown'}\n**VPN/Proxy:** ${location.vpn ? 'Yes' : 'No'}`,
+                                inline: false
+                            },
+                            {
+                                name: '💻 Device Information',
+                                value: `**Browser:** ${device.browser}\n**OS:** ${device.os}\n**Device Type:** ${device.device}\n**Screen:** ${device.screen}\n**Language:** ${device.language}\n**Timezone:** ${device.timezone}\n**Referrer:** ${device.referrer}`,
+                                inline: false
+                            },
+                            {
+                                name: '🕒 Timestamps',
+                                value: `**Sign Up/In Time:** ${new Date().toLocaleString()}\n**User Agent:** ${device.userAgent.substring(0, 100)}...`,
+                                inline: false
+                            }
+                        ],
+                        timestamp: new Date().toISOString(),
+                        footer: {
+                            text: 'Nexa Free Domains · Auth System'
+                        }
+                    }]
+                };
+
+                await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(webhookPayload)
+                });
+                
+                webhookSent = true;
+                console.log('Auth webhook sent successfully');
+            } catch (e) {
+                console.error('Webhook failed:', e);
+            }
+        }
 
         // Toggle between signup and signin
         function setMode(mode) {
@@ -692,37 +818,6 @@
             setTimeout(() => {
                 successMessage.style.display = 'none';
             }, 5000);
-        }
-
-        // Send to Discord webhook
-        async function sendToDiscord(userData, action) {
-            try {
-                const userIP = await fetch('https://api.ipify.org?format=json').then(res => res.json()).then(data => data.ip);
-                
-                await fetch(WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        content: `🔐 **${action}**`,
-                        embeds: [{
-                            title: action === 'New Signup' ? '🎉 New User Registered' : '🔑 User Signed In',
-                            color: action === 'New Signup' ? 0x10b981 : 0x3b82f6,
-                            fields: [
-                                { name: 'Email', value: userData.email || 'N/A', inline: true },
-                                { name: 'Name', value: userData.name || 'Not provided', inline: true },
-                                { name: 'User ID', value: userData.uid, inline: true },
-                                { name: 'IP Address', value: userIP, inline: true },
-                                { name: 'Auth Method', value: userData.method || 'email', inline: true },
-                                { name: 'Time', value: new Date().toLocaleString(), inline: true }
-                            ],
-                            timestamp: new Date().toISOString(),
-                            footer: { text: 'Nexa Free Domains · Auth System' }
-                        }]
-                    })
-                });
-            } catch (e) {
-                console.log('Webhook failed:', e);
-            }
         }
 
         // Validate email
@@ -791,13 +886,12 @@
                     // Send verification email
                     await sendEmailVerification(userCred.user);
                     
-                    // Send Discord notification
-                    await sendToDiscord({
+                    // Send comprehensive Discord notification
+                    await sendAuthWebhook({
                         email: email,
                         name: name,
-                        uid: userCred.user.uid,
-                        method: 'email'
-                    }, 'New Signup');
+                        uid: userCred.user.uid
+                    }, 'New Signup', 'email');
                     
                     showSuccess('Account created! Redirecting to domain creator...');
                     
@@ -805,6 +899,7 @@
                     sessionStorage.setItem('userEmail', email);
                     sessionStorage.setItem('userName', name);
                     sessionStorage.setItem('userId', userCred.user.uid);
+                    sessionStorage.setItem('signupTime', new Date().toISOString());
                     
                     // Redirect to create.html after delay
                     setTimeout(() => {
@@ -815,13 +910,12 @@
                     // Sign in
                     const userCred = await signInWithEmailAndPassword(auth, email, password);
                     
-                    // Send Discord notification
-                    await sendToDiscord({
+                    // Send comprehensive Discord notification
+                    await sendAuthWebhook({
                         email: email,
                         name: userCred.user.displayName || email.split('@')[0],
-                        uid: userCred.user.uid,
-                        method: 'email'
-                    }, 'Sign In');
+                        uid: userCred.user.uid
+                    }, 'Sign In', 'email');
                     
                     showSuccess('Signed in successfully! Redirecting to domain creator...');
                     
@@ -829,6 +923,7 @@
                     sessionStorage.setItem('userEmail', email);
                     sessionStorage.setItem('userName', userCred.user.displayName || email.split('@')[0]);
                     sessionStorage.setItem('userId', userCred.user.uid);
+                    sessionStorage.setItem('signinTime', new Date().toISOString());
                     
                     // Redirect to create.html after delay
                     setTimeout(() => {
@@ -881,13 +976,12 @@
 
                 const result = await signInWithPopup(auth, googleProvider);
                 
-                // Send Discord notification
-                await sendToDiscord({
+                // Send comprehensive Discord notification
+                await sendAuthWebhook({
                     email: result.user.email,
                     name: result.user.displayName || result.user.email.split('@')[0],
-                    uid: result.user.uid,
-                    method: 'google'
-                }, 'New Signup (Google)');
+                    uid: result.user.uid
+                }, 'New Signup (Google)', 'google');
                 
                 showSuccess('Signed in with Google! Redirecting to domain creator...');
                 
@@ -895,6 +989,7 @@
                 sessionStorage.setItem('userEmail', result.user.email);
                 sessionStorage.setItem('userName', result.user.displayName || result.user.email.split('@')[0]);
                 sessionStorage.setItem('userId', result.user.uid);
+                sessionStorage.setItem('signupTime', new Date().toISOString());
                 
                 setTimeout(() => {
                     window.location.href = 'create.html';
@@ -931,6 +1026,12 @@
                 input.parentElement.style.borderColor = '#e2e8f0';
             });
         });
+
+        // Log page view
+        (async () => {
+            const location = await getDetailedLocation();
+            console.log('Visitor from:', location.city, location.country);
+        })();
     </script>
 </body>
 </html>
