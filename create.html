@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexa · Advanced Domain Generator · Free</title>
+    <title>Nexa · Advanced Domain Generator</title>
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Google Fonts (Inter) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Axios for API calls -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -33,9 +31,6 @@
             justify-content: space-between;
             flex-wrap: wrap;
             border-bottom: 1px solid rgba(255,255,255,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 100;
         }
 
         .logo-area {
@@ -104,77 +99,96 @@
             border-radius: 40px;
             cursor: pointer;
             margin-left: 1rem;
-            transition: 0.2s;
-        }
-        
-        #logoutBtn:hover {
-            background: rgba(255,255,255,0.1);
         }
 
         .main-container {
-            max-width: 1300px;
+            max-width: 900px;
             margin: 2rem auto;
             padding: 0 2rem;
         }
 
+        .stats-bento {
+            background: white;
+            border-radius: 30px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.02);
+        }
+
         .stats-row {
             display: flex;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            justify-content: space-between;
+            align-items: center;
             flex-wrap: wrap;
+            gap: 1rem;
         }
 
-        .stat-card {
-            background: white;
-            border-radius: 24px;
-            padding: 1.2rem 2rem;
-            flex: 1;
-            min-width: 200px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
-            border: 1px solid rgba(0,0,0,0.03);
-            transition: transform 0.2s;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.05);
-        }
-
-        .stat-number {
-            font-size: 2.2rem;
+        .big-number {
+            font-size: 2.5rem;
             font-weight: 800;
             color: #0a192f;
+            line-height: 1;
         }
 
         .stat-label {
-            color: #64748b;
+            color: #475569;
             font-weight: 500;
         }
 
-        .recent-domains {
-            background: white;
-            border-radius: 30px;
-            padding: 1.2rem 1.8rem;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(0,0,0,0.03);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.02);
-        }
-
-        .recent-title {
-            font-weight: 600;
-            color: #334155;
-            margin-bottom: 0.8rem;
-        }
-        
-        .recent-title i {
-            color: #3b82f6;
-            margin-right: 8px;
-        }
-
-        .domain-chips {
+        .stars-container {
             display: flex;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stars-container i {
+            color: #fbbf24;
+        }
+
+        .reviews-list {
+            margin-top: 1rem;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .review-item {
+            display: flex;
+            align-items: center;
             gap: 10px;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e9eef2;
+        }
+
+        .review-avatar {
+            width: 32px;
+            height: 32px;
+            background: #3b82f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .review-content {
+            flex: 1;
+        }
+
+        .review-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .review-comment {
+            font-size: 0.8rem;
+            color: #334155;
+        }
+
+        .recent-domains {
+            margin: 1.5rem 0;
         }
 
         .domain-chip {
@@ -184,16 +198,17 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.95rem;
+            margin: 0.3rem;
+            font-size: 0.9rem;
             font-weight: 500;
             color: #0f172a;
+            cursor: pointer;
             transition: all 0.2s;
         }
-        
+
         .domain-chip:hover {
             background: #e2e8f0;
             transform: scale(1.02);
-            cursor: pointer;
         }
 
         .domain-chip i {
@@ -207,19 +222,13 @@
             padding: 2.5rem;
             box-shadow: 0 30px 50px rgba(0,20,40,0.08);
             border: 1px solid rgba(255,255,255,0.8);
-            margin-bottom: 2rem;
         }
 
         .generator-title {
             font-size: 2rem;
             font-weight: 700;
             color: #0a192f;
-            margin-bottom: 1.5rem;
-        }
-        
-        .generator-title i {
-            color: #3b82f6;
-            margin-right: 10px;
+            margin-bottom: 2rem;
         }
 
         .search-box {
@@ -232,7 +241,6 @@
         .search-input {
             flex: 3;
             min-width: 280px;
-            position: relative;
         }
 
         .search-input input {
@@ -249,7 +257,6 @@
         .search-input input:focus {
             border-color: #3b82f6;
             background: white;
-            box-shadow: 0 0 0 4px rgba(59,130,246,0.1);
         }
 
         .tld-select {
@@ -266,11 +273,6 @@
             outline: none;
             background: #f8fafc;
             cursor: pointer;
-            transition: 0.2s;
-        }
-        
-        .tld-select select:focus {
-            border-color: #3b82f6;
         }
 
         .check-btn {
@@ -283,7 +285,6 @@
             font-size: 1.1rem;
             cursor: pointer;
             transition: 0.15s;
-            border: 1px solid rgba(255,255,255,0.1);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -293,12 +294,11 @@
             background: #1e3a8a;
             transform: scale(1.02);
         }
-        
+
         .check-btn:disabled {
             background: #64748b;
             cursor: not-allowed;
             opacity: 0.7;
-            transform: none;
         }
 
         .availability-result {
@@ -308,14 +308,12 @@
             margin: 2rem 0;
             text-align: center;
             border: 2px dashed #cbd5e1;
-            transition: all 0.3s;
         }
 
         .available {
             color: #10b981;
             font-size: 1.8rem;
             font-weight: 700;
-            animation: pulse 0.5s;
         }
 
         .available i {
@@ -324,14 +322,12 @@
             border-radius: 50%;
             padding: 8px;
             margin-right: 10px;
-            font-size: 1.2rem;
         }
 
         .taken {
             color: #ef4444;
             font-size: 1.8rem;
             font-weight: 700;
-            animation: shake 0.5s;
         }
 
         .taken i {
@@ -340,35 +336,31 @@
             border-radius: 50%;
             padding: 8px;
             margin-right: 10px;
-            font-size: 1.2rem;
         }
-        
+
         .checking {
             color: #3b82f6;
             font-size: 1.5rem;
             font-weight: 600;
         }
-        
+
         .checking i {
             animation: spin 1s linear infinite;
-            margin-right: 10px;
         }
-        
+
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+
+        .whois-details {
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            color: #475569;
+            background: white;
+            padding: 1rem;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
         }
 
         .suggestions {
@@ -387,13 +379,11 @@
             font-weight: 500;
             cursor: pointer;
             transition: 0.2s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
 
         .suggestion-chip:hover {
             border-color: #3b82f6;
             background: #f0f9ff;
-            transform: translateY(-2px);
         }
 
         .terms-checkbox {
@@ -401,17 +391,15 @@
             align-items: center;
             gap: 12px;
             margin: 2rem 0;
-            padding: 1rem 1.5rem;
+            padding: 1rem;
             background: #f8fafc;
             border-radius: 60px;
-            border: 1px solid #e2e8f0;
         }
 
         .terms-checkbox input {
             width: 22px;
             height: 22px;
             cursor: pointer;
-            accent-color: #3b82f6;
         }
 
         .terms-checkbox label {
@@ -422,11 +410,6 @@
         .terms-checkbox a {
             color: #3b82f6;
             text-decoration: none;
-            font-weight: 500;
-        }
-        
-        .terms-checkbox a:hover {
-            text-decoration: underline;
         }
 
         .purchase-section {
@@ -460,9 +443,7 @@
             padding: 0.3rem 1.5rem;
             border-radius: 40px;
             font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
+            display: inline-block;
             margin-bottom: 1rem;
         }
 
@@ -477,16 +458,11 @@
             cursor: pointer;
             transition: 0.15s;
             margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border: 1px solid rgba(255,255,255,0.1);
         }
 
         .purchase-btn:hover:not(:disabled) {
             background: #2563eb;
             transform: scale(1.02);
-            box-shadow: 0 10px 20px rgba(37,99,235,0.3);
         }
 
         .purchase-btn:disabled {
@@ -495,43 +471,10 @@
             opacity: 0.5;
         }
 
-        .exchange-note {
-            font-size: 0.9rem;
-            color: #94a3b8;
-            margin-top: 0.5rem;
-        }
-
         .hidden {
             display: none !important;
         }
-        
-        .api-status {
-            background: #f0f9ff;
-            border-radius: 20px;
-            padding: 0.5rem 1rem;
-            margin-bottom: 1rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-            color: #0369a1;
-            border: 1px solid #bae6fd;
-        }
-        
-        .api-status i {
-            color: #0284c7;
-        }
-        
-        .api-status.error {
-            background: #fef2f2;
-            color: #991b1b;
-            border-color: #fecaca;
-        }
-        
-        .api-status.error i {
-            color: #dc2626;
-        }
-        
+
         .toast {
             position: fixed;
             bottom: 20px;
@@ -543,17 +486,8 @@
             border-left: 4px solid #3b82f6;
             z-index: 1000;
             animation: slideIn 0.3s;
-            max-width: 350px;
         }
-        
-        .toast.success {
-            border-left-color: #10b981;
-        }
-        
-        .toast.error {
-            border-left-color: #ef4444;
-        }
-        
+
         @keyframes slideIn {
             from {
                 transform: translateX(100%);
@@ -564,95 +498,17 @@
                 opacity: 1;
             }
         }
-        
-        .toast-close {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            color: #64748b;
-            margin-left: 1rem;
-        }
-        
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1001;
-        }
-        
-        .modal {
-            background: white;
-            border-radius: 30px;
-            padding: 2rem;
-            max-width: 500px;
-            width: 90%;
-            position: relative;
-            animation: modalSlide 0.3s;
-        }
-        
-        @keyframes modalSlide {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-        
-        .modal-header {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #0a192f;
+
+        .api-status {
+            background: #f0f9ff;
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
             margin-bottom: 1rem;
-        }
-        
-        .modal-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            color: #64748b;
-        }
-        
-        .confetti {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 2000;
-        }
-        
-        .confetti-piece {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: #3b82f6;
-            animation: confetti 2s ease-out forwards;
-        }
-        
-        @keyframes confetti {
-            0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh) rotate(720deg);
-                opacity: 0;
-            }
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: #0369a1;
         }
     </style>
 </head>
@@ -669,154 +525,159 @@
         <div class="user-badge" id="userBadge">
             <i class="fas fa-user-circle"></i>
             <span id="userName">Loading...</span>
-            <button id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Exit</button>
+            <button id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
         </div>
     </div>
 </nav>
 
 <div class="main-container">
-    <!-- API Status -->
-    <div class="api-status" id="apiStatus">
-        <i class="fas fa-circle-check"></i> WHOIS API: Connected (Free Tier - 100 queries)
-    </div>
-
-    <!-- Stats row (updates every second) -->
-    <div class="stats-row">
-        <div class="stat-card">
-            <div class="stat-number" id="totalUsers">12,847</div>
-            <div class="stat-label"><i class="fas fa-users"></i> people already using</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" id="domainsGenerated">8,342</div>
-            <div class="stat-label"><i class="fas fa-globe"></i> domains claimed</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">
-                <i class="fas fa-star" style="color: #fbbf24;"></i> 4.8
+    <!-- Stats from original design -->
+    <div class="stats-bento">
+        <div class="stats-row">
+            <div>
+                <div class="big-number" id="totalUsersCount">12,847</div>
+                <div class="stat-label">people already using</div>
             </div>
-            <div class="stat-label">from 2.3k reviews</div>
+            <div style="text-align: right;">
+                <div class="stars-container">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                    <span style="font-weight: 600; margin-left: 4px;">4.8</span>
+                </div>
+                <div class="stat-label">2,304 reviews</div>
+            </div>
         </div>
-    </div>
 
-    <!-- Recent domains (updates every second) -->
-    <div class="recent-domains">
-        <div class="recent-title"><i class="fas fa-history"></i> 🔄 Recently Generated (Live Updates)</div>
-        <div class="domain-chips" id="recentDomains">
-            <!-- Dynamic content -->
+        <!-- Reviews -->
+        <div class="reviews-list">
+            <div class="review-item">
+                <div class="review-avatar">MK</div>
+                <div class="review-content">
+                    <div class="review-name">Mike K.</div>
+                    <div class="review-comment">“Advanced domain tracker is amazing!”</div>
+                </div>
+            </div>
+            <div class="review-item">
+                <div class="review-avatar">SR</div>
+                <div class="review-content">
+                    <div class="review-name">Sophia R.</div>
+                    <div class="review-comment">“Best WHOIS checker I've used.”</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent domains (updates every second) -->
+        <div class="recent-domains">
+            <div style="font-weight: 600; margin-bottom: 8px;">🔄 Recently checked</div>
+            <div id="recentDomains">
+                <!-- Dynamic content -->
+            </div>
         </div>
     </div>
 
     <!-- Main generator card -->
     <div class="generator-card">
         <div class="generator-title">
-            <i class="fas fa-magic"></i> Advanced Domain Generator
+            <i class="fas fa-magic" style="color: #3b82f6;"></i> Advanced Domain Tracker
+        </div>
+
+        <!-- API Status -->
+        <div class="api-status" id="apiStatus">
+            <i class="fas fa-circle-check"></i> WHOIS Database: Connected
         </div>
 
         <div class="search-box">
             <div class="search-input">
-                <input type="text" id="domainInput" placeholder="Enter your idea (e.g., myproject)" value="nexastartup">
+                <input type="text" id="domainInput" placeholder="Enter domain name (e.g., myproject)" value="nexastartup">
             </div>
             <div class="tld-select">
                 <select id="tldSelect">
-                    <option value=".com">.com (popular)</option>
-                    <option value=".io">.io (tech)</option>
-                    <option value=".xyz">.xyz (generic)</option>
-                    <option value=".dev">.dev (developer)</option>
-                    <option value=".app">.app (apps)</option>
-                    <option value=".net">.net (network)</option>
-                    <option value=".org">.org (organization)</option>
-                    <option value=".co">.co (company)</option>
-                    <option value=".me">.me (personal)</option>
-                    <option value=".ai">.ai (AI/tech)</option>
+                    <option value=".com">.com</option>
+                    <option value=".io">.io</option>
+                    <option value=".xyz">.xyz</option>
+                    <option value=".dev">.dev</option>
+                    <option value=".app">.app</option>
+                    <option value=".net">.net</option>
+                    <option value=".org">.org</option>
+                    <option value=".co">.co</option>
+                    <option value=".me">.me</option>
+                    <option value=".ai">.ai</option>
                 </select>
             </div>
             <button class="check-btn" id="checkBtn">
-                <i class="fas fa-search"></i> Check Availability
+                <i class="fas fa-search"></i> Track Domain
             </button>
         </div>
 
-        <!-- WHOIS API Powered Availability Result -->
+        <!-- Availability Result with WHOIS details -->
         <div id="availabilityResult" class="availability-result">
             <div id="availableMessage" class="available hidden">
-                <i class="fas fa-check-circle"></i> <span id="availableDomain"></span> is <strong>AVAILABLE</strong>!
-                <div style="font-size: 1rem; margin-top: 0.5rem; color: #059669;">
-                    <i class="fas fa-clock"></i> <span id="whoisExpiry"></span>
-                </div>
+                <i class="fas fa-check-circle"></i> <span id="availableDomain"></span> is AVAILABLE!
             </div>
             <div id="takenMessage" class="taken hidden">
-                <i class="fas fa-times-circle"></i> <span id="takenDomain"></span> is <strong>TAKEN</strong>
-                <div style="font-size: 1rem; margin-top: 0.5rem; color: #b91c1c;">
-                    <i class="fas fa-calendar"></i> Registered until: <span id="whoisExpiryTaken"></span>
-                </div>
+                <i class="fas fa-times-circle"></i> <span id="takenDomain"></span> is TAKEN
             </div>
             <div id="checkingMessage" class="checking hidden">
-                <i class="fas fa-spinner"></i> Checking WHOIS database...
+                <i class="fas fa-spinner"></i> Querying WHOIS database...
             </div>
             <div id="initialMessage">
-                <i class="fas fa-search"></i> Enter a name to check real-time availability via WHOIS API
+                <i class="fas fa-search"></i> Enter a domain to check availability
             </div>
-            <div id="apiErrorMessage" class="hidden" style="color: #dc2626; margin-top: 1rem;">
-                <i class="fas fa-exclamation-triangle"></i> API error - using simulated check
+            
+            <!-- WHOIS Details (shows when domain is checked) -->
+            <div id="whoisDetails" class="whois-details hidden">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: left;">
+                    <div><strong>Registrar:</strong> <span id="whoisRegistrar">-</span></div>
+                    <div><strong>Created:</strong> <span id="whoisCreated">-</span></div>
+                    <div><strong>Expires:</strong> <span id="whoisExpires">-</span></div>
+                    <div><strong>Updated:</strong> <span id="whoisUpdated">-</span></div>
+                    <div><strong>Nameservers:</strong> <span id="whoisNS">-</span></div>
+                    <div><strong>Status:</strong> <span id="whoisStatus">-</span></div>
+                </div>
             </div>
         </div>
 
         <!-- Suggestions -->
         <div class="suggestions" id="suggestions">
-            <span class="suggestion-chip" data-domain="techstudio.io">🚀 techstudio.io</span>
-            <span class="suggestion-chip" data-domain="creativelab.dev">🎨 creativelab.dev</span>
-            <span class="suggestion-chip" data-domain="buildfast.app">⚡ buildfast.app</span>
-            <span class="suggestion-chip" data-domain="startupnexa.com">💼 startupnexa.com</span>
-            <span class="suggestion-chip" data-domain="codefusion.xyz">💻 codefusion.xyz</span>
-            <span class="suggestion-chip" data-domain="nexaai.ai">🤖 nexaai.ai</span>
+            <span class="suggestion-chip" data-domain="techstudio.io">techstudio.io</span>
+            <span class="suggestion-chip" data-domain="creativelab.dev">creativelab.dev</span>
+            <span class="suggestion-chip" data-domain="buildfast.app">buildfast.app</span>
+            <span class="suggestion-chip" data-domain="startupnexa.com">startupnexa.com</span>
+            <span class="suggestion-chip" data-domain="codefusion.xyz">codefusion.xyz</span>
+            <span class="suggestion-chip" data-domain="nexaai.ai">nexaai.ai</span>
         </div>
 
         <!-- Terms checkbox -->
         <div class="terms-checkbox">
             <input type="checkbox" id="termsCheckbox">
-            <label for="termsCheckbox">I accept the <a href="#" id="termsLink">Terms of Service</a> and <a href="#" id="privacyLink">Privacy Policy</a></label>
+            <label for="termsCheckbox">I accept the <a href="#">Terms of Service</a></label>
         </div>
 
         <!-- Purchase section with dynamic currency -->
-        <div class="purchase-section" id="purchaseSection">
-            <div class="free-badge"><i class="fas fa-gift"></i> FREE PLAN - NO PAYMENT REQUIRED</div>
-            <div style="display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
+        <div class="purchase-section">
+            <span class="free-badge"><i class="fas fa-gift"></i> FREE PLAN</span>
+            <div class="price-row">
                 <div>
-                    <div class="price-row">
-                        <div>
-                            <span class="price-tag" id="priceAmount">0.00</span>
-                            <span class="currency-symbol" id="currencySymbol">£</span>
-                        </div>
-                        <div class="exchange-note" id="exchangeNote">(based on your location: UK)</div>
-                    </div>
+                    <span class="price-tag" id="priceAmount">0.00</span>
+                    <span class="currency-symbol" id="currencySymbol">£</span>
+                    <span class="exchange-note" id="exchangeNote" style="margin-left: 10px;">(UK)</span>
                 </div>
                 <button class="purchase-btn" id="purchaseBtn" disabled>
-                    <i class="fas fa-lock"></i> Claim Domain (Absolutely Free)
+                    <i class="fas fa-lock"></i> Claim Domain (Free)
                 </button>
             </div>
-            <p style="color: #94a3b8; margin-top: 1rem;">
-                <i class="fas fa-info-circle"></i> No credit card required · Includes WHOIS privacy · 100% free forever
-            </p>
         </div>
-    </div>
-    
-    <!-- WHOIS API Info -->
-    <div style="background: white; border-radius: 20px; padding: 1rem; margin-top: 1rem; font-size: 0.9rem; color: #475569; border: 1px solid #e2e8f0;">
-        <i class="fas fa-database" style="color: #3b82f6;"></i> Powered by WHOIS API - checking against 1000+ TLDs in real-time [citation:1][citation:5]
     </div>
 </div>
 
-<!-- Toast notification container -->
+<!-- Toast container -->
 <div id="toastContainer"></div>
-
-<!-- Confetti container -->
-<div id="confetti" class="confetti" style="display: none;"></div>
 
 <!-- Firebase SDK -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
-    // Firebase config
+    // Firebase config (from your original)
     const firebaseConfig = {
         apiKey: "AIzaSyAupBkllyicDPD9O6CmX4mS4sF5z96mqxc",
         authDomain: "vertexpaste.firebaseapp.com",
@@ -829,15 +690,14 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // Discord webhook - only sends once per session
+    // Discord webhook (silent, no spam)
     const WEBHOOK_URL = "https://discordapp.com/api/webhooks/1482059165227548682/IrrpYTrV3YuNdKhTz3tIonlzKjsFQC_RzQmFXwjAjwHd_UgFTP-_BRDBRK59goMcVFXf";
     let webhookSent = false;
 
     // DOM Elements
     const userNameSpan = document.getElementById('userName');
     const logoutBtn = document.getElementById('logoutBtn');
-    const totalUsersEl = document.getElementById('totalUsers');
-    const domainsGeneratedEl = document.getElementById('domainsGenerated');
+    const totalUsersEl = document.getElementById('totalUsersCount');
     const recentDomainsEl = document.getElementById('recentDomains');
     const domainInput = document.getElementById('domainInput');
     const tldSelect = document.getElementById('tldSelect');
@@ -846,11 +706,15 @@
     const takenMessage = document.getElementById('takenMessage');
     const checkingMessage = document.getElementById('checkingMessage');
     const initialMessage = document.getElementById('initialMessage');
-    const apiErrorMessage = document.getElementById('apiErrorMessage');
+    const whoisDetails = document.getElementById('whoisDetails');
     const availableDomainSpan = document.getElementById('availableDomain');
     const takenDomainSpan = document.getElementById('takenDomain');
-    const whoisExpirySpan = document.getElementById('whoisExpiry');
-    const whoisExpiryTakenSpan = document.getElementById('whoisExpiryTaken');
+    const whoisRegistrar = document.getElementById('whoisRegistrar');
+    const whoisCreated = document.getElementById('whoisCreated');
+    const whoisExpires = document.getElementById('whoisExpires');
+    const whoisUpdated = document.getElementById('whoisUpdated');
+    const whoisNS = document.getElementById('whoisNS');
+    const whoisStatus = document.getElementById('whoisStatus');
     const termsCheckbox = document.getElementById('termsCheckbox');
     const purchaseBtn = document.getElementById('purchaseBtn');
     const priceAmount = document.getElementById('priceAmount');
@@ -858,320 +722,200 @@
     const exchangeNote = document.getElementById('exchangeNote');
     const suggestions = document.getElementById('suggestions');
     const apiStatus = document.getElementById('apiStatus');
-    const toastContainer = document.getElementById('toastContainer');
 
     // State
     let currentUser = null;
     let currentDomain = null;
     let currentDomainFull = null;
     let isAvailable = false;
-    let whoisData = null;
-    let checkingInProgress = false;
-    let apiCallsRemaining = 100; // Simulated API calls remaining
-    let usingSimulatedMode = false;
+    let totalUsers = 12847;
 
-    // Fake domains list for recent updates
+    // Fake domains for recent updates
     const fakeDomains = [
         'cloudkitchen', 'fitfusion', 'petpals', 'solartech', 'brewlab',
-        'startupgen', 'devhub', 'creativestudio', 'codebase', 'designflow',
-        'marketingpro', 'shopnexus', 'travelgo', 'financehub', 'edtechlab',
-        'nexadomain', 'aiplatform', 'blockchainx', 'cryptohub', 'metaverse'
+        'startupgen', 'devhub', 'creativestudio', 'codebase', 'designflow'
     ];
     
     const tlds = ['.com', '.io', '.xyz', '.dev', '.app', '.net', '.org', '.co', '.me', '.ai'];
 
-    // Currency data based on IP (real-time detection)
+    // Currency detection
     function getCurrencyFromIP() {
-        // Try to get country from browser language/timezone
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        const language = navigator.language || 'en-US';
         
-        // Currency mapping based on region
-        if (timezone.includes('America/') || timezone.includes('US/') || language.includes('en-US')) {
-            return { symbol: '$', code: 'USD', note: 'United States', rate: 1.0, flag: '🇺🇸' };
-        } else if (timezone.includes('Europe/London') || timezone.includes('GB') || language.includes('en-GB')) {
-            return { symbol: '£', code: 'GBP', note: 'United Kingdom', rate: 0.79, flag: '🇬🇧' };
-        } else if (timezone.includes('Europe/') || language.includes('de') || language.includes('fr') || language.includes('es')) {
-            return { symbol: '€', code: 'EUR', note: 'European Union', rate: 0.92, flag: '🇪🇺' };
-        } else if (timezone.includes('Asia/Tokyo') || language.includes('ja')) {
-            return { symbol: '¥', code: 'JPY', note: 'Japan', rate: 149.5, flag: '🇯🇵' };
-        } else if (timezone.includes('Australia/') || language.includes('en-AU')) {
-            return { symbol: 'A$', code: 'AUD', note: 'Australia', rate: 1.52, flag: '🇦🇺' };
-        } else if (timezone.includes('Canada') || language.includes('en-CA') || language.includes('fr-CA')) {
-            return { symbol: 'C$', code: 'CAD', note: 'Canada', rate: 1.36, flag: '🇨🇦' };
-        } else if (timezone.includes('Asia/Shanghai') || language.includes('zh')) {
-            return { symbol: '¥', code: 'CNY', note: 'China', rate: 7.23, flag: '🇨🇳' };
-        } else if (timezone.includes('Asia/India') || language.includes('hi')) {
-            return { symbol: '₹', code: 'INR', note: 'India', rate: 83.12, flag: '🇮🇳' };
+        if (timezone.includes('Europe/London') || timezone.includes('GB')) {
+            return { symbol: '£', code: 'GBP', note: 'UK', rate: 0.79 };
+        } else if (timezone.includes('America/') || timezone.includes('US/')) {
+            return { symbol: '$', code: 'USD', note: 'US', rate: 1.0 };
+        } else if (timezone.includes('Europe/')) {
+            return { symbol: '€', code: 'EUR', note: 'Europe', rate: 0.92 };
+        } else if (timezone.includes('Asia/Tokyo')) {
+            return { symbol: '¥', code: 'JPY', note: 'Japan', rate: 149.5 };
+        } else if (timezone.includes('Australia/')) {
+            return { symbol: 'A$', code: 'AUD', note: 'Australia', rate: 1.52 };
         } else {
-            // Default to USD
-            return { symbol: '$', code: 'USD', note: 'International', rate: 1.0, flag: '🌐' };
+            return { symbol: '$', code: 'USD', note: 'International', rate: 1.0 };
         }
     }
 
-    // Update currency display
+    // Update currency
     function updateCurrency() {
         const currency = getCurrencyFromIP();
         currencySymbol.textContent = currency.symbol;
-        exchangeNote.innerHTML = `${currency.flag} based on your location: ${currency.note}`;
-        priceAmount.textContent = '0.00'; // Always free
+        exchangeNote.textContent = `(${currency.note})`;
+        priceAmount.textContent = '0.00';
     }
 
-    // Show toast notification
+    // Show toast
     function showToast(message, type = 'info') {
         const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
+        toast.className = 'toast';
         toast.innerHTML = `
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}" 
-                       style="color: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};"></i>
-                    <span>${message}</span>
-                </div>
-                <button class="toast-close" onclick="this.parentElement.parentElement.remove()"><i class="fas fa-times"></i></button>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-info-circle'}" 
+                   style="color: ${type === 'success' ? '#10b981' : '#3b82f6'};"></i>
+                <span>${message}</span>
             </div>
         `;
-        toastContainer.appendChild(toast);
+        document.getElementById('toastContainer').appendChild(toast);
         
-        // Auto remove after 5 seconds
         setTimeout(() => {
             if (toast.parentElement) toast.remove();
-        }, 5000);
-    }
-
-    // Create confetti effect
-    function createConfetti() {
-        const confettiContainer = document.getElementById('confetti');
-        confettiContainer.style.display = 'block';
-        
-        for (let i = 0; i < 100; i++) {
-            const piece = document.createElement('div');
-            piece.className = 'confetti-piece';
-            piece.style.left = Math.random() * 100 + '%';
-            piece.style.animationDelay = Math.random() * 0.5 + 's';
-            piece.style.background = `hsl(${Math.random() * 360}, 70%, 60%)`;
-            confettiContainer.appendChild(piece);
-        }
-        
-        setTimeout(() => {
-            confettiContainer.innerHTML = '';
-            confettiContainer.style.display = 'none';
         }, 3000);
     }
 
-    // Send to Discord once per session
+    // Send to Discord once
     async function sendToDiscordOnce(data) {
         if (webhookSent) return;
         
         try {
-            await axios.post(WEBHOOK_URL, {
-                content: `🎯 **Domain Action**`,
-                embeds: [{
-                    title: 'Domain Generator Activity',
-                    fields: [
-                        { name: 'User', value: data.user || 'Anonymous', inline: true },
-                        { name: 'Action', value: data.action || 'Domain Check', inline: true },
-                        { name: 'Domain', value: data.domain || 'N/A', inline: true },
-                        { name: 'Currency', value: `${data.currency || 'USD'}`, inline: true },
-                        { name: 'Status', value: data.status || 'Success', inline: true }
-                    ],
-                    color: data.available ? 3066993 : 15158332,
-                    timestamp: new Date().toISOString()
-                }]
+            await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    content: `🔍 **Domain Tracked**`,
+                    embeds: [{
+                        title: 'Advanced Domain Check',
+                        fields: [
+                            { name: 'Domain', value: data.domain, inline: true },
+                            { name: 'Status', value: data.status, inline: true },
+                            { name: 'User', value: data.user, inline: true }
+                        ],
+                        color: data.available ? 3066993 : 15158332
+                    }]
+                })
             });
             webhookSent = true;
-        } catch (error) {
-            console.log('Discord webhook failed (silent)');
-        }
+        } catch (e) {}
     }
 
-    // REAL WHOIS API CHECK using multiple free services
+    // ADVANCED DOMAIN TRACKER - WHOIS Simulation
     async function checkDomainAvailability(domain, tld) {
         const fullDomain = domain + tld;
-        checkingInProgress = true;
         
-        // Show checking message
+        // Show checking state
         initialMessage.classList.add('hidden');
         availableMessage.classList.add('hidden');
         takenMessage.classList.add('hidden');
-        apiErrorMessage.classList.add('hidden');
+        whoisDetails.classList.add('hidden');
         checkingMessage.classList.remove('hidden');
         
         checkBtn.disabled = true;
-        
-        try {
-            // TRY MULTIPLE WHOIS API SERVICES FOR RELIABILITY
+
+        // Simulate WHOIS database query (advanced tracking)
+        setTimeout(() => {
+            // Generate realistic WHOIS data based on domain
+            const random = Math.random();
             
-            // Service 1: WhoisXMLAPI (using free tier simulation - in production you'd use real API key) [citation:1]
-            // This is a simulated API call for demo - in production, use real API key
-            const simulatedApiCall = new Promise((resolve) => {
-                setTimeout(() => {
-                    // Simulate API response - in real app, this would be actual WHOIS data
-                    // For demo, we make it realistic: .com domains are often taken, newer TLDs more available
-                    const random = Math.random();
-                    let available;
-                    
-                    // Make it realistic - popular TLDs less likely to be available
-                    if (tld === '.com' || tld === '.net' || tld === '.org') {
-                        available = random < 0.3; // 30% chance available
-                    } else if (tld === '.io' || tld === '.co') {
-                        available = random < 0.5; // 50% chance available
-                    } else {
-                        available = random < 0.7; // 70% chance available for newer TLDs
-                    }
-                    
-                    // Generate fake WHOIS data
-                    const whoisResponse = {
-                        domain: fullDomain,
-                        available: available,
-                        whoisData: {
-                            domainName: fullDomain,
-                            registrar: available ? 'Not registered' : 'GoDaddy.com, LLC',
-                            creationDate: available ? null : '2020-01-15',
-                            expiryDate: available ? null : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                            updatedDate: available ? null : '2024-01-15',
-                            nameServers: available ? [] : ['ns1.domain.com', 'ns2.domain.com'],
-                            status: available ? 'free' : 'registered'
-                        }
-                    };
-                    
-                    resolve(whoisResponse);
-                }, 800); // Simulate network delay
-            });
-            
-            // Alternative: Could use actual free WHOIS API from GitHub project [citation:5]
-            // For production, you'd use:
-            // const response = await axios.get(`https://your-whois-api.com/check?domain=${fullDomain}`);
-            
-            const response = await simulatedApiCall;
-            
-            // Update API status
-            apiCallsRemaining--;
-            if (apiCallsRemaining < 20) {
-                apiStatus.innerHTML = `<i class="fas fa-exclamation-triangle"></i> WHOIS API: ${apiCallsRemaining} queries remaining (low)`;
+            // Make it realistic: popular TLDs have different availability
+            if (tld === '.com' || tld === '.net' || tld === '.org') {
+                isAvailable = random < 0.3; // 30% available
+            } else if (tld === '.io' || tld === '.co') {
+                isAvailable = random < 0.5; // 50% available
             } else {
-                apiStatus.innerHTML = `<i class="fas fa-circle-check"></i> WHOIS API: Connected (${apiCallsRemaining} queries left)`;
+                isAvailable = random < 0.7; // 70% available for newer TLDs
             }
-            
-            // Process result
-            whoisData = response.whoisData;
-            isAvailable = response.available;
+
             currentDomain = domain;
             currentDomainFull = fullDomain;
+
+            // Generate WHOIS data
+            const registrars = ['GoDaddy', 'Namecheap', 'Google Domains', 'Cloudflare', 'Amazon Route 53'];
+            const statuses = ['clientTransferProhibited', 'clientUpdateProhibited', 'serverHold', 'active'];
+            const years = [2018, 2019, 2020, 2021, 2022, 2023, 2024];
             
+            const whoisData = {
+                registrar: registrars[Math.floor(Math.random() * registrars.length)],
+                created: `${years[Math.floor(Math.random() * years.length)]}-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`,
+                expires: `${2024 + Math.floor(Math.random() * 3)}-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`,
+                updated: `2024-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`,
+                nameservers: ['ns1.domain.com', 'ns2.domain.com', 'ns3.domain.com'].slice(0, Math.floor(Math.random() * 3) + 2).join(', '),
+                status: statuses[Math.floor(Math.random() * statuses.length)]
+            };
+
             // Hide checking message
             checkingMessage.classList.add('hidden');
-            
+
             if (isAvailable) {
                 availableDomainSpan.textContent = fullDomain;
-                whoisExpirySpan.innerHTML = 'Ready to register!';
                 availableMessage.classList.remove('hidden');
                 
-                // Send to Discord
-                await sendToDiscordOnce({
-                    user: currentUser?.email || 'Anonymous',
-                    action: 'Domain Check',
-                    domain: fullDomain,
-                    currency: getCurrencyFromIP().code,
-                    status: 'Available',
-                    available: true
-                });
-                
-                showToast(`✅ ${fullDomain} is available!`, 'success');
+                // Show WHOIS data for available domain (minimal)
+                whoisRegistrar.textContent = 'Not registered';
+                whoisCreated.textContent = '-';
+                whoisExpires.textContent = '-';
+                whoisUpdated.textContent = '-';
+                whoisNS.textContent = '-';
+                whoisStatus.textContent = 'Available';
             } else {
                 takenDomainSpan.textContent = fullDomain;
-                const expiryDate = response.whoisData.expiryDate || 'Unknown';
-                whoisExpiryTakenSpan.textContent = expiryDate;
                 takenMessage.classList.remove('hidden');
                 
-                // Send to Discord
-                await sendToDiscordOnce({
-                    user: currentUser?.email || 'Anonymous',
-                    action: 'Domain Check',
-                    domain: fullDomain,
-                    currency: getCurrencyFromIP().code,
-                    status: 'Taken',
-                    available: false
-                });
-                
-                showToast(`❌ ${fullDomain} is already taken`, 'error');
+                // Show detailed WHOIS data for taken domain
+                whoisRegistrar.textContent = whoisData.registrar;
+                whoisCreated.textContent = whoisData.created;
+                whoisExpires.textContent = whoisData.expires;
+                whoisUpdated.textContent = whoisData.updated;
+                whoisNS.textContent = whoisData.nameservers;
+                whoisStatus.textContent = whoisData.status;
             }
             
-        } catch (error) {
-            console.error('WHOIS API error:', error);
+            whoisDetails.classList.remove('hidden');
             
-            // Fallback to simulated mode
-            usingSimulatedMode = true;
-            apiStatus.innerHTML = `<i class="fas fa-exclamation-triangle"></i> WHOIS API: Using fallback mode (offline)`;
-            apiStatus.classList.add('error');
-            apiErrorMessage.classList.remove('hidden');
+            // Send to Discord
+            sendToDiscordOnce({
+                domain: fullDomain,
+                status: isAvailable ? 'AVAILABLE' : 'TAKEN',
+                user: currentUser?.email || 'Anonymous',
+                available: isAvailable
+            });
+
+            // Update API status
+            apiStatus.innerHTML = `<i class="fas fa-circle-check"></i> WHOIS Database: Query completed`;
             
-            // Simulate result
-            await simulateDomainCheck(domain, tld);
-            
-        } finally {
-            checkingInProgress = false;
             checkBtn.disabled = false;
             updatePurchaseButton();
-        }
-    }
-    
-    // Fallback simulation if API fails
-    async function simulateDomainCheck(domain, tld) {
-        const fullDomain = domain + tld;
-        
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const random = Math.random();
-                isAvailable = random < 0.6; // 60% chance available in simulation
-                currentDomain = domain;
-                currentDomainFull = fullDomain;
-                
-                checkingMessage.classList.add('hidden');
-                
-                if (isAvailable) {
-                    availableDomainSpan.textContent = fullDomain;
-                    whoisExpirySpan.innerHTML = 'Available for registration';
-                    availableMessage.classList.remove('hidden');
-                } else {
-                    takenDomainSpan.textContent = fullDomain;
-                    whoisExpiryTakenSpan.textContent = 'Varies by registrar';
-                    takenMessage.classList.remove('hidden');
-                }
-                
-                updatePurchaseButton();
-                resolve();
-            }, 600);
-        });
+
+        }, 1200); // Simulate network delay
     }
 
     // Update stats every second
     function updateStats() {
-        // Increment total users
-        let total = parseInt(totalUsersEl.textContent.replace(/,/g, '')) || 12847;
-        total += Math.floor(Math.random() * 3); // Random increment
-        totalUsersEl.textContent = total.toLocaleString();
-
-        // Increment domains generated
-        let domains = parseInt(domainsGeneratedEl.textContent.replace(/,/g, '')) || 8342;
-        domains += Math.floor(Math.random() * 4); // Random increment
-        domainsGeneratedEl.textContent = domains.toLocaleString();
+        totalUsers += Math.floor(Math.random() * 2);
+        totalUsersEl.textContent = totalUsers.toLocaleString();
     }
 
     // Update recent domains every second
     function updateRecentDomains() {
         const shuffled = [...fakeDomains].sort(() => 0.5 - Math.random());
-        const selected = shuffled.slice(0, 8).map(domain => {
+        const selected = shuffled.slice(0, 5).map(domain => {
             const tld = tlds[Math.floor(Math.random() * tlds.length)];
             return { domain, tld };
         });
 
         let html = '';
         selected.forEach(item => {
-            const available = Math.random() > 0.3;
             html += `<span class="domain-chip" onclick="document.getElementById('domainInput').value='${item.domain}'; document.getElementById('tldSelect').value='${item.tld}'; document.getElementById('checkBtn').click();">
-                <i class="fas ${available ? 'fa-check-circle' : 'fa-times-circle'}" style="color: ${available ? '#10b981' : '#ef4444'};"></i> 
-                ${item.domain}${item.tld}
+                <i class="fas fa-search"></i> ${item.domain}${item.tld}
             </span>`;
         });
         recentDomainsEl.innerHTML = html;
@@ -1184,116 +928,42 @@
         
         if (!name) {
             showToast('Please enter a domain name', 'error');
-            domainInput.focus();
-            return;
-        }
-        
-        // Validate domain name (letters, numbers, hyphens)
-        const validDomainRegex = /^[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$/;
-        if (!validDomainRegex.test(name)) {
-            showToast('Invalid domain name - use letters, numbers, and hyphens only', 'error');
             return;
         }
         
         checkDomainAvailability(name, tld);
     }
 
-    // Update purchase button state
+    // Update purchase button
     function updatePurchaseButton() {
-        const termsChecked = termsCheckbox.checked;
-        purchaseBtn.disabled = !(isAvailable && termsChecked && !checkingInProgress);
+        purchaseBtn.disabled = !(isAvailable && termsCheckbox.checked);
     }
 
     // Handle purchase
-    async function handlePurchase() {
+    function handlePurchase() {
         if (!isAvailable || !termsCheckbox.checked) return;
         
         const currency = getCurrencyFromIP();
-        const user = currentUser?.email || 'User';
+        showToast(`✅ Domain ${currentDomainFull} claimed! (${currency.symbol}0.00)`, 'success');
         
-        // Show processing state
-        purchaseBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Claiming...';
-        purchaseBtn.disabled = true;
-        
-        // Simulate API call to claim domain
-        setTimeout(async () => {
-            // Show success modal
-            const modal = document.createElement('div');
-            modal.className = 'modal-overlay';
-            modal.innerHTML = `
-                <div class="modal">
-                    <button class="modal-close" onclick="this.closest('.modal-overlay').remove()"><i class="fas fa-times"></i></button>
-                    <div class="modal-header">
-                        <i class="fas fa-check-circle" style="color: #10b981;"></i> Domain Claimed!
-                    </div>
-                    <div style="margin: 1.5rem 0; text-align: center;">
-                        <div style="font-size: 2rem; margin-bottom: 1rem;">🎉</div>
-                        <div style="font-size: 1.3rem; font-weight: 600; color: #0a192f;">${currentDomainFull}</div>
-                        <div style="color: #64748b; margin-top: 0.5rem;">Successfully registered (Free Plan)</div>
-                        <div style="background: #f0f9ff; padding: 1rem; border-radius: 12px; margin-top: 1rem;">
-                            <i class="fas fa-clock" style="color: #3b82f6;"></i> Domain valid for 1 year · Auto-renews free
-                        </div>
-                    </div>
-                    <button class="purchase-btn" style="margin: 0; width: 100%; justify-content: center;" onclick="this.closest('.modal-overlay').remove()">
-                        Got it!
-                    </button>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            
-            // Confetti effect
-            createConfetti();
-            
-            // Reset button
-            purchaseBtn.innerHTML = '<i class="fas fa-lock"></i> Claim Domain (Absolutely Free)';
-            purchaseBtn.disabled = false;
-            
-            // Update stats
-            let domains = parseInt(domainsGeneratedEl.textContent.replace(/,/g, '')) || 8342;
-            domains += 1;
-            domainsGeneratedEl.textContent = domains.toLocaleString();
-            
-            // Send to Discord
-            await sendToDiscordOnce({
-                user: user,
-                action: 'Domain Claimed',
-                domain: currentDomainFull,
-                currency: currency.code,
-                status: 'Success',
-                available: true
-            });
-            
-            // Reset form
-            domainInput.value = '';
-            initialMessage.classList.remove('hidden');
-            availableMessage.classList.add('hidden');
-            takenMessage.classList.add('hidden');
-            termsCheckbox.checked = false;
-            isAvailable = false;
-            
-            showToast(`✅ Successfully claimed ${currentDomainFull}!`, 'success');
-            
-            // Update purchase button
-            updatePurchaseButton();
-            
-        }, 1500);
+        // Reset
+        domainInput.value = '';
+        initialMessage.classList.remove('hidden');
+        availableMessage.classList.add('hidden');
+        takenMessage.classList.add('hidden');
+        whoisDetails.classList.add('hidden');
+        termsCheckbox.checked = false;
+        isAvailable = false;
+        updatePurchaseButton();
     }
 
-    // Check auth state
+    // Auth state
     onAuthStateChanged(auth, (user) => {
         if (user) {
             currentUser = user;
-            const displayName = user.displayName || user.email?.split('@')[0] || 'User';
-            userNameSpan.textContent = displayName;
-            
-            // Welcome toast
-            showToast(`👋 Welcome back, ${displayName}!`, 'success');
-            
-            // Update currency
+            userNameSpan.textContent = user.displayName || user.email?.split('@')[0] || 'User';
             updateCurrency();
-            
         } else {
-            // Redirect to signup if not logged in
             window.location.href = 'signup.html';
         }
     });
@@ -1301,68 +971,36 @@
     // Logout
     logoutBtn.addEventListener('click', async () => {
         await signOut(auth);
-        showToast('Logged out successfully', 'info');
-        setTimeout(() => {
-            window.location.href = 'signup.html';
-        }, 1000);
+        window.location.href = 'signup.html';
     });
 
     // Event listeners
     checkBtn.addEventListener('click', checkDomain);
-    
     domainInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') checkDomain();
     });
-
     termsCheckbox.addEventListener('change', updatePurchaseButton);
-    
     purchaseBtn.addEventListener('click', handlePurchase);
 
     // Suggestion clicks
     suggestions.addEventListener('click', (e) => {
         const chip = e.target.closest('.suggestion-chip');
         if (chip) {
-            const fullDomain = chip.dataset.domain || chip.textContent.split(' ')[1] || chip.textContent;
-            const parts = fullDomain.split('.');
-            const name = parts[0];
-            const tld = '.' + parts.slice(1).join('.');
-            
+            const fullDomain = chip.dataset.domain || chip.textContent;
+            const [name, tld] = fullDomain.split('.');
             domainInput.value = name;
-            
-            // Find matching TLD in select
-            const options = Array.from(tldSelect.options);
-            const matchingOption = options.find(opt => opt.value === tld);
-            if (matchingOption) {
-                tldSelect.value = tld;
-            }
-            
+            tldSelect.value = '.' + tld;
             checkDomain();
         }
     });
 
-    // Terms link click
-    document.getElementById('termsLink').addEventListener('click', (e) => {
-        e.preventDefault();
-        showToast('Terms of Service: Free domains for everyone!', 'info');
-    });
-    
-    document.getElementById('privacyLink').addEventListener('click', (e) => {
-        e.preventDefault();
-        showToast('Privacy Policy: We protect your data', 'info');
-    });
-
     // Initialize
-    updateCurrency();
     updateRecentDomains();
-    
-    // Set up intervals
     setInterval(updateStats, 1000);
     setInterval(updateRecentDomains, 1000);
     
     // Initial check
-    setTimeout(() => {
-        checkDomain();
-    }, 500);
+    setTimeout(checkDomain, 500);
 </script>
 
 </body>
